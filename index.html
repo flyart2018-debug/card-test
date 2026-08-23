@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カードテスト</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background: #f2f2f2;
+            color: #222;
+        }
+
+        header {
+            background: #222;
+            color: white;
+            padding: 16px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        main {
+            max-width: 900px;
+            margin: auto;
+            padding: 16px;
+        }
+
+        .status {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .status-box {
+            background: white;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+
+        .field {
+            background: white;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+
+        .field-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .slot {
+            min-height: 80px;
+            border: 2px dashed #aaa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+        }
+
+        .hand {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+        }
+
+        .card {
+            min-width: 130px;
+            padding: 12px;
+            border: 1px solid #aaa;
+            border-radius: 10px;
+            background: white;
+        }
+
+        .end-turn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            background: #222;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    カードテスト
+</header>
+
+<main>
+
+    <div class="status">
+        <div class="status-box">
+            <strong>拠点</strong>
+            <br>
+            ● ● ●
+        </div>
+
+        <div class="status-box">
+            <strong>国力</strong>
+            <br>
+            0
+        </div>
+
+        <div class="status-box">
+            <strong>コスト</strong>
+            <br>
+            3
+        </div>
+    </div>
+
+    <div class="field">
+        <div class="field-title">
+            前線
+        </div>
+
+        <div class="slots">
+            <div class="slot">空き</div>
+            <div class="slot">空き</div>
+            <div class="slot">空き</div>
+        </div>
+    </div>
+
+    <div class="field">
+        <div class="field-title">
+            後衛
+        </div>
+
+        <div class="slots">
+            <div class="slot">空き</div>
+            <div class="slot">空き</div>
+        </div>
+    </div>
+
+    <div class="field">
+        <div class="field-title">
+            手札
+        </div>
+
+        <div class="hand">
+
+            <div class="card">
+                <strong>歩兵</strong>
+                <br><br>
+                コスト：2
+                <br>
+                国力：0
+                <br>
+                ATK：2000
+                <br>
+                DEF：2500
+            </div>
+
+            <div class="card">
+                <strong>槍兵</strong>
+                <br><br>
+                コスト：2
+                <br>
+                国力：0
+                <br>
+                ATK：2500
+                <br>
+                DEF：2000
+            </div>
+
+            <div class="card">
+                <strong>対空魔導師</strong>
+                <br><br>
+                コスト：3
+                <br>
+                国力：0
+                <br>
+                ATK：2000
+                <br>
+                DEF：2000
+            </div>
+
+        </div>
+    </div>
+
+    <button class="end-turn">
+        ターン終了
+    </button>
+
+</main>
+
+</body>
+</html>
