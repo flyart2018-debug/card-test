@@ -1,205 +1,355 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>カードテスト</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>カードテスト</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: sans-serif;
-            background: #f2f2f2;
-            color: #222;
-        }
+<style>
+* {
+    box-sizing: border-box;
+}
 
-        header {
-            background: #222;
-            color: white;
-            padding: 16px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-        }
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #eeeeee;
+    color: #222;
+}
 
-        main {
-            max-width: 900px;
-            margin: auto;
-            padding: 16px;
-        }
+header {
+    background: #222;
+    color: white;
+    text-align: center;
+    padding: 18px;
+    font-size: 24px;
+    font-weight: bold;
+}
 
-        .status {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 16px;
-        }
+main {
+    max-width: 700px;
+    margin: auto;
+    padding: 15px;
+}
 
-        .status-box {
-            background: white;
-            border-radius: 10px;
-            padding: 14px;
-            text-align: center;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-        }
+.status {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
 
-        .field {
-            background: white;
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 16px;
-        }
+.box {
+    background: white;
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    box-shadow: 0 2px 5px #0002;
+}
 
-        .field-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
+.number {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 4px;
+}
 
-        .slots {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
+.section {
+    background: white;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 5px #0002;
+}
 
-        .slot {
-            min-height: 80px;
-            border: 2px dashed #aaa;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #888;
-        }
+.title {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
 
-        .hand {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-        }
+.slots {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
 
-        .card {
-            min-width: 130px;
-            padding: 12px;
-            border: 1px solid #aaa;
-            border-radius: 10px;
-            background: white;
-        }
+.slot {
+    min-height: 100px;
+    border: 2px dashed #aaa;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
 
-        .end-turn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 10px;
-            background: #222;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-        }
-    </style>
+.card {
+    width: 100%;
+    min-height: 100px;
+    background: #f8f8f8;
+    border: 2px solid #aaa;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: left;
+}
+
+button.card {
+    cursor: pointer;
+}
+
+button.card:active {
+    transform: scale(0.97);
+}
+
+.card-name {
+    font-size: 17px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.card-info {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.hand {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.message {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.end-button {
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    background: #222;
+    color: white;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: bold;
+}
+</style>
 </head>
 
 <body>
 
 <header>
-    カードテスト
+カードテスト
 </header>
 
 <main>
 
-    <div class="status">
-        <div class="status-box">
-            <strong>拠点</strong>
-            <br>
-            ● ● ●
-        </div>
+<div class="status">
 
-        <div class="status-box">
-            <strong>国力</strong>
-            <br>
-            0
-        </div>
-
-        <div class="status-box">
-            <strong>コスト</strong>
-            <br>
-            3
-        </div>
+    <div class="box">
+        <div>拠点</div>
+        <div class="number">● ● ●</div>
     </div>
 
-    <div class="field">
-        <div class="field-title">
-            前線
-        </div>
-
-        <div class="slots">
-            <div class="slot">空き</div>
-            <div class="slot">空き</div>
-            <div class="slot">空き</div>
-        </div>
+    <div class="box">
+        <div>国力</div>
+        <div class="number">0</div>
     </div>
 
-    <div class="field">
-        <div class="field-title">
-            後衛
-        </div>
-
-        <div class="slots">
-            <div class="slot">空き</div>
-            <div class="slot">空き</div>
-        </div>
+    <div class="box">
+        <div>コスト</div>
+        <div class="number" id="cost">3</div>
     </div>
 
-    <div class="field">
-        <div class="field-title">
-            手札
-        </div>
+</div>
 
-        <div class="hand">
 
-            <div class="card">
-                <strong>歩兵</strong>
-                <br><br>
-                コスト：2
-                <br>
-                国力：0
-                <br>
-                ATK：2000
-                <br>
+<div class="section">
+
+    <div class="title">
+        前線
+    </div>
+
+    <div class="slots" id="front">
+
+        <div class="slot">空き</div>
+        <div class="slot">空き</div>
+        <div class="slot">空き</div>
+
+    </div>
+
+</div>
+
+
+<div class="section">
+
+    <div class="title">
+        後衛
+    </div>
+
+    <div class="slots">
+
+        <div class="slot">空き</div>
+        <div class="slot">空き</div>
+
+    </div>
+
+</div>
+
+
+<div class="section">
+
+    <div class="title">
+        手札
+    </div>
+
+    <div class="hand" id="hand">
+
+        <button class="card" onclick="playCard('歩兵', 2, 2000, 2500)">
+            <div class="card-name">歩兵</div>
+            <div class="card-info">
+                コスト：2<br>
+                国力：0<br>
+                ATK：2000<br>
                 DEF：2500
             </div>
+        </button>
 
-            <div class="card">
-                <strong>槍兵</strong>
-                <br><br>
-                コスト：2
-                <br>
-                国力：0
-                <br>
-                ATK：2500
-                <br>
+        <button class="card" onclick="playCard('槍兵', 2, 2500, 2000)">
+            <div class="card-name">槍兵</div>
+            <div class="card-info">
+                コスト：2<br>
+                国力：0<br>
+                ATK：2500<br>
                 DEF：2000
             </div>
+        </button>
 
-            <div class="card">
-                <strong>対空魔導師</strong>
-                <br><br>
-                コスト：3
-                <br>
-                国力：0
-                <br>
-                ATK：2000
-                <br>
+        <button class="card" onclick="playCard('対空魔導師', 3, 2000, 2000)">
+            <div class="card-name">対空魔導師</div>
+            <div class="card-info">
+                コスト：3<br>
+                国力：0<br>
+                ATK：2000<br>
                 DEF：2000
             </div>
+        </button>
 
-        </div>
     </div>
 
-    <button class="end-turn">
-        ターン終了
-    </button>
+    <div class="message" id="message">
+        カードをタップして出撃
+    </div>
+
+</div>
+
+
+<button class="end-button" onclick="endTurn()">
+    ターン終了
+</button>
 
 </main>
+
+
+<script>
+
+let cost = 3;
+
+let frontCards = [];
+
+
+function playCard(name, cardCost, attack, defense) {
+
+    // コストチェック
+    if (cost < cardCost) {
+
+        document.getElementById("message").textContent =
+            "❌ コストが足りない！";
+
+        return;
+    }
+
+
+    // 前線3枚制限
+    if (frontCards.length >= 3) {
+
+        document.getElementById("message").textContent =
+            "❌ 前線は3枚まで！";
+
+        return;
+    }
+
+
+    // コストを支払う
+    cost -= cardCost;
+
+
+    // カード情報を保存
+    frontCards.push({
+        name: name,
+        attack: attack,
+        defense: defense
+    });
+
+
+    // 表示更新
+    updateField();
+
+
+    document.getElementById("message").textContent =
+        "⚔️ " + name + "が前線に出撃！";
+}
+
+
+function updateField() {
+
+    document.getElementById("cost").textContent = cost;
+
+    const front = document.getElementById("front");
+
+    front.innerHTML = "";
+
+
+    for (let i = 0; i < 3; i++) {
+
+        const slot = document.createElement("div");
+
+        slot.className = "slot";
+
+
+        if (frontCards[i]) {
+
+            slot.innerHTML =
+                "<strong>" +
+                frontCards[i].name +
+                "</strong><br><br>" +
+                "ATK " +
+                frontCards[i].attack +
+                "<br>" +
+                "DEF " +
+                frontCards[i].defense;
+
+        } else {
+
+            slot.textContent = "空き";
+
+        }
+
+
+        front.appendChild(slot);
+    }
+}
+
+
+function endTurn() {
+
+    document.getElementById("message").textContent =
+        "ターン終了！";
+
+}
+
+</script>
 
 </body>
 </html>
