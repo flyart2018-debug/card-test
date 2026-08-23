@@ -6,7 +6,9 @@
 <title>カードテスト</title>
 
 <style>
-* { box-sizing: border-box; }
+* {
+    box-sizing: border-box;
+}
 
 body {
     margin: 0;
@@ -89,6 +91,11 @@ main {
 
 .player {
     border-color: #488;
+}
+
+.defense {
+    border-color: #888;
+    background: #fafafa;
 }
 
 .card {
@@ -180,6 +187,8 @@ button.card:active {
 
 <main>
 
+<!-- ステータス -->
+
 <div class="status">
 
     <div class="box">
@@ -205,6 +214,20 @@ button.card:active {
 </div>
 
 
+<!-- CPU防衛軍 -->
+
+<div class="section">
+
+    <div class="title">
+        CPU 防衛軍
+    </div>
+
+    <div class="slots" id="enemyDefense">
+    </div>
+
+</div>
+
+
 <!-- CPU前線 -->
 
 <div class="section">
@@ -214,6 +237,20 @@ button.card:active {
     </div>
 
     <div class="slots" id="enemyFront">
+    </div>
+
+</div>
+
+
+<!-- 自分防衛軍 -->
+
+<div class="section">
+
+    <div class="title">
+        あなたの防衛軍
+    </div>
+
+    <div class="slots" id="playerDefense">
     </div>
 
 </div>
@@ -245,17 +282,24 @@ button.card:active {
     </div>
 
     <div class="message" id="message">
-        カードを出撃させてください
+        戦闘テスト
     </div>
 
 </div>
 
 
-<button class="end-button" id="endButton" onclick="endTurn()">
+<button
+    class="end-button"
+    id="endButton"
+    onclick="endTurn()"
+>
     ターン終了
 </button>
 
-<button class="reset-button" onclick="resetGame()">
+<button
+    class="reset-button"
+    onclick="resetGame()"
+>
     ゲームリセット
 </button>
 
@@ -266,11 +310,15 @@ button.card:active {
 
 let turn;
 let cost;
+
 let playerBase;
 let cpuBase;
 
 let playerFront;
 let enemyFront;
+
+let playerDefense;
+let enemyDefense;
 
 let hand;
 let deck;
@@ -293,9 +341,21 @@ function resetGame() {
 
     cpuBase = 3;
 
+
     playerFront = [];
 
     enemyFront = [];
+
+
+    /*
+       今回追加した防衛軍
+       テストでは3枚
+    */
+
+    playerDefense = 3;
+
+    enemyDefense = 3;
+
 
     gameOver = false;
 
@@ -369,7 +429,8 @@ function resetGame() {
 
 
     /*
-       テスト用CPU歩兵
+       CPU前線
+       最初は歩兵1枚
     */
 
     enemyFront.push({
@@ -386,7 +447,9 @@ function resetGame() {
 
     render();
 
-    showMessage("⚔️ 戦闘テスト開始！");
+    showMessage(
+        "⚔️ 防衛軍テスト開始"
+    );
 
 }
 
@@ -399,9 +462,12 @@ function playCard(index) {
 
     if (gameOver) return;
 
+
     if (!canPlay) {
 
-        showMessage("⚠️ ターン終了済み");
+        showMessage(
+            "⚠️ ターン終了済み"
+        );
 
         return;
 
@@ -416,7 +482,9 @@ function playCard(index) {
 
     if (cost < card.cost) {
 
-        showMessage("❌ コスト不足");
+        showMessage(
+            "❌ コスト不足"
+        );
 
         return;
 
@@ -425,7 +493,9 @@ function playCard(index) {
 
     if (playerFront.length >= 3) {
 
-        showMessage("❌ 前線は3枚まで");
+        showMessage(
+            "❌ 前線は3枚まで"
+        );
 
         return;
 
@@ -448,7 +518,9 @@ function playCard(index) {
 
 
     showMessage(
-        "⚔️ " + card.name + "が出撃！"
+        "⚔️ " +
+        card.name +
+        "が出撃！"
     );
 
 
@@ -466,7 +538,8 @@ function attack(index) {
     if (gameOver) return;
 
 
-    const attacker = playerFront[index];
+    const attacker =
+        playerFront[index];
 
 
     if (!attacker) return;
@@ -475,7 +548,7 @@ function attack(index) {
     if (!attacker.ready) {
 
         showMessage(
-            "⏳ このカードは次のターンから攻撃できます"
+            "⏳ 次のターンから攻撃できます"
         );
 
         return;
@@ -484,12 +557,13 @@ function attack(index) {
 
 
     /*
-       敵前線がある場合
+       敵前線がある
     */
 
     if (enemyFront.length > 0) {
 
-        const defender = enemyFront[0];
+        const defender =
+            enemyFront[0];
 
 
         showMessage(
@@ -513,15 +587,72 @@ function attack(index) {
 
 
     /*
-       敵前線がない場合
+       敵前線がない
+       ↓
        防衛軍を攻撃
+    */
+
+    attackDefense(index);
+
+}
+
+
+/* =========================
+   防衛軍への攻撃
+========================= */
+
+function attackDefense(index) {
+
+    const attacker =
+        playerFront[index];
+
+
+    /*
+       防衛軍が残っている
+    */
+
+    if (enemyDefense > 0) {
+
+        enemyDefense--;
+
+
+        showMessage(
+            "🛡️ 防衛軍を1枚破壊！" +
+            " 残り：" +
+            enemyDefense
+        );
+
+
+        /*
+           攻撃したカードは
+           そのターン再攻撃不可
+        */
+
+        attacker.ready = false;
+
+
+        render();
+
+        return;
+
+    }
+
+
+    /*
+       防衛軍が0枚
+       ↓
+       拠点攻撃
     */
 
     cpuBase--;
 
 
+    attacker.ready = false;
+
+
     showMessage(
-        "🏰 防衛軍を1枚破壊！"
+        "🏰 防衛軍がないため" +
+        "CPU拠点を1つ破壊！"
     );
 
 
@@ -533,7 +664,7 @@ function attack(index) {
 
 
 /* =========================
-   戦闘判定
+   戦闘
 ========================= */
 
 function battle(attackerIndex) {
@@ -541,14 +672,10 @@ function battle(attackerIndex) {
     const attacker =
         playerFront[attackerIndex];
 
+
     const defender =
         enemyFront[0];
 
-
-    /*
-       ATK > DEF
-       攻撃側勝利
-    */
 
     if (
         attacker.attack >
@@ -556,6 +683,7 @@ function battle(attackerIndex) {
     ) {
 
         enemyFront.shift();
+
 
         showMessage(
             "💥 " +
@@ -568,11 +696,6 @@ function battle(attackerIndex) {
     }
 
 
-    /*
-       ATK < DEF
-       防御側勝利
-    */
-
     else if (
         attacker.attack <
         defender.defense
@@ -583,6 +706,7 @@ function battle(attackerIndex) {
             1
         );
 
+
         showMessage(
             "💀 " +
             attacker.name +
@@ -592,11 +716,6 @@ function battle(attackerIndex) {
     }
 
 
-    /*
-       ATK = DEF
-       同時破壊
-    */
-
     else {
 
         playerFront.splice(
@@ -604,7 +723,9 @@ function battle(attackerIndex) {
             1
         );
 
+
         enemyFront.shift();
+
 
         showMessage(
             "💥 両方のカードが同時破壊！"
@@ -631,6 +752,7 @@ function endTurn() {
 
     canPlay = false;
 
+
     showMessage(
         "ターン終了……"
     );
@@ -653,16 +775,12 @@ function nextTurn() {
 
     turn++;
 
-    /*
-       テスト版
-       毎ターンコスト＋3
-    */
 
     cost += 3;
 
 
     /*
-       既存カードを攻撃可能に
+       攻撃可能にする
     */
 
     playerFront.forEach(card => {
@@ -678,7 +796,9 @@ function nextTurn() {
 
     if (deck.length > 0) {
 
-        hand.push(deck.shift());
+        hand.push(
+            deck.shift()
+        );
 
     }
 
@@ -756,6 +876,114 @@ function render() {
 
 
     /*
+       CPU防衛軍
+    */
+
+    const enemyDefenseElement =
+        document.getElementById(
+            "enemyDefense"
+        );
+
+
+    enemyDefenseElement.innerHTML = "";
+
+
+    for (
+        let i = 0;
+        i < enemyDefense;
+        i++
+    ) {
+
+        const slot =
+            document.createElement(
+                "div"
+            );
+
+
+        slot.className =
+            "slot defense";
+
+
+        slot.innerHTML =
+            "🛡️<br>" +
+            "<strong>防衛軍</strong>";
+
+        enemyDefenseElement.appendChild(
+            slot
+        );
+
+    }
+
+
+    /*
+       防衛軍が0枚なら表示
+    */
+
+    if (enemyDefense === 0) {
+
+        const empty =
+            document.createElement(
+                "div"
+            );
+
+
+        empty.className =
+            "slot defense";
+
+
+        empty.innerHTML =
+            "防衛軍なし<br>" +
+            "次の攻撃で拠点へ";
+
+        enemyDefenseElement.appendChild(
+            empty
+        );
+
+    }
+
+
+    /*
+       自分防衛軍
+    */
+
+    const playerDefenseElement =
+        document.getElementById(
+            "playerDefense"
+        );
+
+
+    playerDefenseElement.innerHTML = "";
+
+
+    for (
+        let i = 0;
+        i < playerDefense;
+        i++
+    ) {
+
+        const slot =
+            document.createElement(
+                "div"
+            );
+
+
+        slot.className =
+            "slot defense";
+
+
+        slot.innerHTML =
+            "🛡️<br>" +
+            "<strong>防衛軍</strong>";
+
+
+        playerDefenseElement.appendChild(
+            slot
+        );
+
+    }
+
+
+    /*
        CPU前線
     */
 
@@ -768,7 +996,11 @@ function render() {
     enemy.innerHTML = "";
 
 
-    for (let i = 0; i < 3; i++) {
+    for (
+        let i = 0;
+        i < 3;
+        i++
+    ) {
 
         const slot =
             document.createElement(
@@ -828,7 +1060,11 @@ function render() {
     front.innerHTML = "";
 
 
-    for (let i = 0; i < 3; i++) {
+    for (
+        let i = 0;
+        i < 3;
+        i++
+    ) {
 
         const slot =
             document.createElement(
@@ -940,7 +1176,6 @@ function render() {
     hand.forEach(
         (card, index) => {
 
-
             const button =
                 document.createElement(
                     "button"
@@ -954,9 +1189,7 @@ function render() {
             button.innerHTML =
 
                 "<div class='card-name'>" +
-
                 card.name +
-
                 "</div>" +
 
                 "<div class='card-info'>" +
