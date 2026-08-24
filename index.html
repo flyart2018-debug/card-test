@@ -2,338 +2,423 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>戦争戦略カードゲーム</title>
-
 <style>
 *{box-sizing:border-box}
-
+html,body{
+  margin:0;width:100%;height:100%;
+  background:#080a0d;color:#f4f0e7;
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  overflow:hidden;
+}
 body{
-  margin:0;
-  background:#10131a;
-  color:#eee;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 50% 30%,rgba(70,84,64,.18),transparent 45%),
+    #080a0d;
+}
+button{font:inherit}
+
+#rotateNotice{
+  display:none;position:fixed;inset:0;z-index:99999;
+  background:#080a0d;align-items:center;justify-content:center;text-align:center;
+}
+#rotateNotice .notice{
+  padding:28px;border:1px solid #6f6048;border-radius:18px;
+  background:#12161a;max-width:420px;
+}
+#rotateNotice .notice .icon{font-size:48px}
+#rotateNotice h2{margin:8px 0;font-size:20px}
+#rotateNotice p{margin:0;color:#b9b1a4;line-height:1.7}
+
+#gameViewport{
+  width:100vw;height:100dvh;
+  overflow-y:auto;overflow-x:hidden;
+  scroll-snap-type:y mandatory;
+  scroll-behavior:smooth;
+  overscroll-behavior-y:none;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+#gameViewport::-webkit-scrollbar{display:none}
+
+.fieldPage{
+  width:100vw;height:100dvh;min-height:100dvh;
+  scroll-snap-align:start;scroll-snap-stop:always;
+  position:relative;overflow:hidden;
+  background:
+    linear-gradient(rgba(5,8,6,.18),rgba(5,8,6,.48)),
+    radial-gradient(circle at 50% 30%,rgba(86,102,75,.25),transparent 42%),
+    linear-gradient(180deg,#263426 0%,#10170f 55%,#090d0a 100%);
+}
+.fieldPage:before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+  background:
+    radial-gradient(circle at 10% 20%,rgba(255,255,255,.06),transparent 15%),
+    radial-gradient(circle at 82% 26%,rgba(255,255,255,.04),transparent 18%),
+    repeating-linear-gradient(115deg,transparent 0 40px,rgba(0,0,0,.06) 41px 43px);
+}
+.fieldPage.enemy{
+  background:
+    linear-gradient(rgba(25,5,6,.12),rgba(7,7,7,.55)),
+    radial-gradient(circle at 50% 30%,rgba(116,54,49,.22),transparent 42%),
+    linear-gradient(180deg,#3a2523 0%,#19110f 55%,#090b0c 100%);
 }
 
-header{
-  background:#171b24;
-  padding:18px;
-  text-align:center;
-  font-size:24px;
-  font-weight:bold;
+/* ornate game frame */
+.frame{
+  position:absolute;inset:8px;
+  border:1px solid rgba(186,157,104,.65);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.65),0 0 28px rgba(0,0,0,.35);
+  pointer-events:none;z-index:3;
 }
+.frame:before,.frame:after{
+  content:"";position:absolute;width:18px;height:18px;border-color:#b99a68;
+}
+.frame:before{left:-1px;top:-1px;border-left:2px solid;border-top:2px solid}
+.frame:after{right:-1px;bottom:-1px;border-right:2px solid;border-bottom:2px solid}
 
-main{
-  max-width:1100px;
-  margin:auto;
-  padding:12px;
+.topHud{
+  position:absolute;left:22px;right:22px;top:14px;height:54px;z-index:10;
+  display:grid;grid-template-columns:145px 1fr 145px;align-items:center;gap:12px;
 }
+.factionBanner{
+  height:42px;display:flex;align-items:center;justify-content:center;
+  border:1px solid #9e8150;border-radius:4px;
+  background:linear-gradient(180deg,rgba(25,29,27,.95),rgba(7,9,9,.95));
+  color:#e8d9b5;font-weight:900;letter-spacing:.08em;font-size:16px;
+  clip-path:polygon(8% 0,92% 0,100% 50%,92% 100%,8% 100%,0 50%);
+}
+.enemy .factionBanner{border-color:#9a514b;color:#f0c5bd}
 
-.status{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:8px;
-  margin-bottom:12px;
+.resource{
+  position:relative;height:52px;display:flex;align-items:center;justify-content:center;
 }
+.resource .circle{
+  position:absolute;left:0;top:0;width:55px;height:55px;border-radius:50%;
+  border:2px solid #927849;background:radial-gradient(circle,#243b55,#0a1017 72%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:0 0 10px rgba(42,82,130,.25);
+}
+.resource .circle small{font-size:9px;color:#d0c4aa}
+.resource .circle b{font-size:22px;color:#f4f0e7;line-height:1}
+.resource .costBox{
+  margin-left:58px;text-align:left;color:#e8d8b2;
+}
+.resource .costBox b{font-size:18px}
+.resource .costBox span{font-size:11px;color:#b8b0a3;margin-left:8px}
+.enemy .resource .circle{left:auto;right:0;border-color:#99544c;background:radial-gradient(circle,#4a2224,#0d0b0c 72%)}
+.enemy .resource .costBox{margin-left:0;margin-right:58px;text-align:right}
+.enemy .resource{justify-content:flex-end}
 
-.stat{
-  background:#202632;
-  border-radius:10px;
-  padding:10px;
-  text-align:center;
+.turnBox{
+  text-align:center;color:#d5cbb8;font-size:11px;line-height:1.5;
 }
+.turnBox b{font-size:15px;color:#f2eadc}
 
-.stat b{
-  display:block;
-  font-size:20px;
-  margin-top:4px;
+.deckBox{
+  height:44px;border:1px solid #796747;background:rgba(8,10,9,.76);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  font-size:10px;color:#bcb3a3;
 }
+.deckBox b{font-size:18px;color:#eee6d5}
 
-.panel{
-  background:#1b2029;
-  border:1px solid #394252;
-  border-radius:12px;
-  padding:12px;
-  margin-bottom:12px;
+/* Main field */
+.fieldBody{
+  position:absolute;left:10px;right:10px;top:76px;bottom:122px;
+  display:grid;grid-template-columns:110px minmax(0,1fr) 110px;gap:8px;z-index:4;
 }
+.sideLane{
+  display:grid;grid-template-rows:1fr 1fr;gap:8px;min-height:0;
+}
+.sideZone{
+  min-height:0;border:1px solid rgba(81,125,159,.75);
+  background:linear-gradient(180deg,rgba(9,17,22,.74),rgba(8,12,13,.84));
+  padding:5px;display:flex;flex-direction:column;
+  box-shadow:inset 0 0 14px rgba(0,0,0,.5);
+}
+.sideZone h4{
+  margin:0 0 4px;text-align:center;font-size:10px;color:#9ec4dd;letter-spacing:.08em;
+}
+.sideZone .slotWrap{flex:1;min-height:0}
 
-.panel h2,
-.panel h3{
-  margin-top:0;
+.centralField{
+  min-width:0;display:grid;
+  grid-template-rows:1.05fr .72fr .9fr .78fr;
+  gap:6px;
 }
-
-.grid3{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
+.zone{
+  min-height:0;border:1px solid rgba(154,132,89,.7);
+  background:linear-gradient(180deg,rgba(14,17,14,.48),rgba(8,10,9,.68));
+  position:relative;padding:5px 7px;
+  box-shadow:inset 0 0 16px rgba(0,0,0,.45);
 }
-
-.grid2{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:8px;
+.zoneTitle{
+  height:16px;text-align:center;font-size:11px;font-weight:900;color:#d8c7a5;
+  letter-spacing:.08em;text-shadow:0 1px 4px #000;
 }
-
-.grid1{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:8px;
+.slots{
+  height:calc(100% - 16px);
+  display:grid;align-items:center;justify-content:center;gap:7px;
 }
+.frontSlots{grid-template-columns:repeat(3,minmax(70px,1fr))}
+.rearSlots{grid-template-columns:repeat(2,minmax(80px,1fr));max-width:420px;margin:auto}
+.defenseSlots{grid-template-columns:repeat(5,minmax(50px,1fr))}
+.diplomacySlots{grid-template-columns:repeat(5,minmax(50px,1fr))}
 
 .slot{
-  min-height:95px;
-  border:2px dashed #555f70;
-  border-radius:9px;
-  padding:8px;
-  text-align:center;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
+  min-width:0;height:100%;max-height:92px;min-height:50px;
+  border:1px dashed rgba(176,159,126,.62);border-radius:5px;
+  background:rgba(11,14,13,.52);
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  color:#aaa99f;font-size:9px;padding:4px;
 }
-
-.defense-slot{
-  background:#0c0f14;
-}
-
+.slot strong{font-size:10px;color:#eee6d7}
 .face-down{
-  font-size:32px;
-  color:#fff;
-  background:#090b10;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(126,96,44,.35),transparent 42%),
+    repeating-linear-gradient(45deg,#17140f 0 5px,#292115 5px 10px);
+  border:1px solid #9b7b45;color:#cbb789;font-size:26px;
+  box-shadow:inset 0 0 12px rgba(0,0,0,.8);
 }
+.defenseSlots .slot{max-height:68px}
+.diplomacySlots .slot{max-height:52px}
 
+.handPanel{
+  position:absolute;left:22px;right:22px;bottom:10px;height:102px;z-index:10;
+  border:1px solid rgba(156,132,89,.8);
+  background:linear-gradient(180deg,rgba(9,11,10,.84),rgba(4,6,6,.96));
+  padding:5px 8px;
+}
+.handTitle{
+  position:absolute;left:10px;top:-18px;font-size:10px;color:#d7c8aa;
+  background:#0b0d0c;border:1px solid #735f42;padding:2px 10px;
+}
+#hand{
+  height:100%;display:flex;gap:7px;align-items:stretch;overflow:hidden;
+}
 .card{
-  background:#242b37;
-  border:1px solid #465163;
-  border-radius:9px;
-  padding:10px;
-  margin-bottom:8px;
+  flex:1 1 0;min-width:84px;max-width:155px;
+  border:1px solid #8e7650;border-radius:4px;
+  background:linear-gradient(145deg,#3a3024,#171513);
+  padding:5px;position:relative;box-shadow:0 3px 10px #0008;
+}
+.card-name{font-size:10px;font-weight:900;color:#eee3ce;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-info{font-size:7px;line-height:1.35;color:#c6bcab;overflow:hidden;max-height:46px}
+.card button{
+  width:100%;border:1px solid #725f43;border-radius:3px;
+  background:#24261f;color:#eee0c4;font-size:7px;padding:3px;margin-top:3px;
+}
+.card button:disabled{opacity:.4}
+
+.bottomBar{
+  position:absolute;left:22px;right:22px;bottom:2px;height:30px;z-index:12;
+  display:flex;justify-content:space-between;align-items:center;
+  pointer-events:none;
+}
+.uiButton{
+  pointer-events:auto;border:1px solid #806b49;border-radius:3px;
+  background:rgba(9,11,10,.9);color:#d8c7a5;padding:5px 15px;font-size:10px;
+}
+.swipeHint{
+  position:absolute;left:50%;bottom:126px;transform:translateX(-50%);
+  z-index:20;color:#cfc1a5;font-size:10px;opacity:.72;
+  text-shadow:0 1px 4px #000;pointer-events:none;
+}
+.enemy .swipeHint{bottom:auto;top:88px}
+.turnIndicator{
+  position:absolute;left:50%;top:68px;transform:translateX(-50%);z-index:15;
+  padding:4px 16px;border:1px solid #8b754d;border-radius:20px;
+  background:rgba(8,10,9,.72);font-size:10px;color:#e3d5bb;
 }
 
-.card-name{
-  font-size:17px;
-  font-weight:bold;
-  margin-bottom:5px;
-}
+/* central battle separator is visually implied by zone frames */
+.fieldPage.enemy .sideZone{border-color:rgba(145,77,73,.72)}
+.fieldPage.enemy .zone{border-color:rgba(143,105,85,.7)}
+.fieldPage.enemy .zoneTitle{color:#ddc1ad}
+.fieldPage.enemy .handPanel{border-color:rgba(145,77,73,.72)}
+.fieldPage.enemy .handTitle{border-color:#754744;color:#dfb7ad}
 
-.card-info{
-  font-size:12px;
-  line-height:1.5;
-  color:#c3cad5;
-}
+/* hide source-only panels if accidentally retained */
+.legacy{display:none}
 
-button{
-  width:100%;
-  border:0;
-  border-radius:8px;
-  padding:10px;
-  margin-top:6px;
-  background:#303a4b;
-  color:white;
-  font-weight:bold;
-}
-
-button:disabled{
-  opacity:.45;
-}
-
-.log{
-  max-height:220px;
-  overflow:auto;
-  font-size:12px;
-  line-height:1.6;
-  color:#c5ccd7;
-}
-
-.message{
-  text-align:center;
-  font-weight:bold;
-  padding:8px;
-  line-height:1.5;
-}
-
-.result{
-  display:none;
-  background:#252d39;
-  border-radius:12px;
-  padding:18px;
-  text-align:center;
-  font-size:26px;
-  font-weight:bold;
-  margin-bottom:12px;
-}
-
-@media(max-width:760px){
-  .status{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-  .grid3{
-    grid-template-columns:repeat(2,1fr);
-  }
+@media (orientation:portrait){
+  #rotateNotice{display:flex}
+  #gameViewport{display:none}
 }
 </style>
 </head>
-
 <body>
 
-<header>
-戦争戦略カードゲーム
-</header>
-
-<main>
-
-<div id="result" class="result"></div>
-
-<div class="status">
-
-  <div class="stat">
-    ターン
-    <b id="turn">0</b>
+<div id="rotateNotice">
+  <div class="notice">
+    <div class="icon">📱↔️</div>
+    <h2>横画面でプレイ</h2>
+    <p>このカードゲームは横画面UIで設計しています。<br>端末を横向きにしてください。</p>
   </div>
-
-  <div class="stat">
-    国力
-    <b id="power">0</b>
-  </div>
-
-  <div class="stat">
-    コスト
-    <b id="cost">0</b>
-  </div>
-
-  <div class="stat">
-    拠点
-    <b id="bases">3</b>
-  </div>
-
-  <div class="stat">
-    防衛軍
-    <b id="defenseCount">5</b>
-  </div>
-
-  <div class="stat">
-    手札
-    <b id="handCount">0</b>
-  </div>
-
 </div>
 
+<div id="gameViewport">
 
-<div class="panel">
+  <!-- 自陣ページ -->
+  <section class="fieldPage player" id="playerPage">
+    <div class="frame"></div>
 
-  <h3>ターン操作</h3>
+    <div class="topHud">
+      <div class="factionBanner">自陣フィールド</div>
 
-  <button onclick="beginTurn()">
-    開始フェイズ・ドロー
-  </button>
+      <div class="resource">
+        <div class="circle"><small>国力</small><b id="power">0</b></div>
+        <div class="costBox"><b>COST <span id="cost">0</span>/10</b><span>ターン <b id="turn">0</b> ・ あなたのターン</span></div>
+      </div>
 
-  <button onclick="increasePower()">
-    コスト5 → 国力＋1
-  </button>
+      <div class="deckBox">残りデッキ<b id="playerDeckCount">--</b></div>
+    </div>
 
-  <button onclick="finishTurn()">
-    ターン終了
-  </button>
+    <div class="turnIndicator">自分のターン ― 基本は自陣を表示</div>
 
-  <button onclick="resetGame()">
-    ゲームリセット
-  </button>
+    <div class="fieldBody">
+      <aside class="sideLane">
+        <div class="sideZone">
+          <h4>空軍エリア</h4>
+          <div id="playerAir" class="slotWrap"></div>
+        </div>
+        <div class="sideZone">
+          <h4>海軍エリア</h4>
+          <div id="playerSea" class="slotWrap"></div>
+        </div>
+      </aside>
 
+      <section class="centralField">
+        <div class="zone">
+          <div class="zoneTitle">前衛エリア</div>
+          <div id="playerFront" class="slots frontSlots"></div>
+        </div>
+        <div class="zone">
+          <div class="zoneTitle">後衛エリア</div>
+          <div id="playerRear" class="slots rearSlots"></div>
+        </div>
+        <div class="zone">
+          <div class="zoneTitle">防衛軍エリア（裏向き5枚まで）</div>
+          <div id="playerDefense" class="slots defenseSlots"></div>
+        </div>
+        <div class="zone">
+          <div class="zoneTitle">外交カードエリア</div>
+          <div id="playerDiplomacy" class="slots diplomacySlots"></div>
+        </div>
+      </section>
+
+      <aside class="sideLane">
+        <div class="sideZone">
+          <h4>空軍エリア</h4>
+          <div class="slotWrap"></div>
+        </div>
+        <div class="sideZone">
+          <h4>海軍エリア</h4>
+          <div class="slotWrap"></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="handPanel">
+      <div class="handTitle">手札エリア</div>
+      <div id="hand"></div>
+    </div>
+
+    <div class="swipeHint">↓ 下にスワイプすると敵陣を表示</div>
+
+    <div class="bottomBar">
+      <button class="uiButton" onclick="document.getElementById('logPanel').style.display='block'">メニュー</button>
+      <div style="display:flex;gap:6px;align-items:center;pointer-events:auto">
+        <button class="uiButton" onclick="beginTurn()">開始フェイズ</button>
+        <button class="uiButton" onclick="increasePower()">国力＋1</button>
+        <button class="uiButton" onclick="finishTurn()">ターン終了</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 敵陣ページ -->
+  <section class="fieldPage enemy" id="enemyPage">
+    <div class="frame"></div>
+
+    <div class="topHud">
+      <div class="factionBanner">敵陣フィールド</div>
+
+      <div class="resource">
+        <div class="circle"><small>国力</small><b id="enemyPower">--</b></div>
+        <div class="costBox"><b>COST <span id="enemyCost">--</span>/10</b><span>ターン <b id="enemyTurn">--</b> ・ 敵のターン</span></div>
+      </div>
+
+      <div class="deckBox">残りデッキ<b id="enemyDeckCount">--</b></div>
+    </div>
+
+    <div class="turnIndicator">敵陣フィールド ― 上にスワイプすると自陣へ</div>
+
+    <div class="fieldBody">
+      <aside class="sideLane">
+        <div class="sideZone">
+          <h4>空軍エリア</h4>
+          <div id="enemyAir" class="slotWrap"></div>
+        </div>
+        <div class="sideZone">
+          <h4>海軍エリア</h4>
+          <div id="enemySea" class="slotWrap"></div>
+        </div>
+      </aside>
+
+      <section class="centralField">
+        <div class="zone">
+          <div class="zoneTitle">前衛エリア</div>
+          <div id="enemyFront" class="slots frontSlots"></div>
+        </div>
+        <div class="zone">
+          <div class="zoneTitle">後衛エリア</div>
+          <div id="enemyRear" class="slots rearSlots"></div>
+        </div>
+        <div class="zone">
+          <div class="zoneTitle">防衛軍エリア（裏向き5枚まで）</div>
+          <div id="enemyDefense" class="slots defenseSlots"></div>
+        </div>
+        <div class="zone">
+          <div class="zoneTitle">外交カードエリア</div>
+          <div id="enemyDiplomacy" class="slots diplomacySlots"></div>
+        </div>
+      </section>
+
+      <aside class="sideLane">
+        <div class="sideZone">
+          <h4>空軍エリア</h4>
+          <div class="slotWrap"></div>
+        </div>
+        <div class="sideZone">
+          <h4>海軍エリア</h4>
+          <div class="slotWrap"></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="handPanel">
+      <div class="handTitle">敵手札エリア</div>
+      <div id="enemyHand"></div>
+    </div>
+
+    <div class="swipeHint">↑ 上にスワイプすると自陣を表示</div>
+
+    <div class="bottomBar">
+      <button class="uiButton" onclick="document.getElementById('logPanel').style.display='block'">ログ</button>
+      <div style="font-size:9px;color:#b9a998">戦場（中央域）― 攻撃・効果の対象</div>
+    </div>
+  </section>
 </div>
 
-
-<div class="panel">
-
-  <h3>メッセージ</h3>
-
-  <div id="message" class="message">
-    ゲーム開始
-  </div>
-
-</div>
-
-
-<!-- 自分 -->
-
-<div class="panel">
-
-  <h2>自分</h2>
-
-  <h3>防衛軍</h3>
-  <div id="playerDefense" class="grid3"></div>
-
-  <h3>前線</h3>
-  <div id="playerFront" class="grid3"></div>
-
-  <h3>後衛</h3>
-  <div id="playerRear" class="grid2"></div>
-
-  <h3>空軍</h3>
-  <div id="playerAir" class="grid1"></div>
-
-  <h3>海軍</h3>
-  <div id="playerSea" class="grid2"></div>
-
-  <h3>英雄</h3>
-  <div id="playerHeroes" class="grid3"></div>
-
-  <h3>外交官</h3>
-  <div id="playerDiplomats" class="grid3"></div>
-
-</div>
-
-
-<!-- 相手 -->
-
-<div class="panel">
-
-  <h2>相手</h2>
-
-  <h3>防衛軍</h3>
-  <div id="enemyDefense" class="grid3"></div>
-
-  <h3>前線</h3>
-  <div id="enemyFront" class="grid3"></div>
-
-  <h3>後衛</h3>
-  <div id="enemyRear" class="grid2"></div>
-
-  <h3>空軍</h3>
-  <div id="enemyAir" class="grid1"></div>
-
-  <h3>海軍</h3>
-  <div id="enemySea" class="grid2"></div>
-
-</div>
-
-
-<!-- 手札 -->
-
-<div class="panel">
-
-  <h2>手札</h2>
-
-  <div id="hand"></div>
-
-</div>
-
-
-<!-- ログ -->
-
-<div class="panel">
-
+<div id="logPanel" style="display:none;position:fixed;inset:12%;z-index:100;background:#111612;border:1px solid #8a7049;border-radius:10px;padding:18px;overflow:auto">
+  <button class="uiButton" onclick="this.parentElement.style.display='none'">閉じる</button>
   <h3>ゲームログ</h3>
-
   <div id="log" class="log"></div>
-
+  <div id="message" class="message"></div>
 </div>
-
-</main>
-
 
 <script>
-
 /* =========================================================
    基本ルール
 ========================================================= */
@@ -2867,8 +2952,176 @@ function render(){
 ========================================================= */
 
 resetGame();
-
 </script>
 
+<script>
+/* =========================================================
+   CONCEPT UI BRIDGE
+   既存ゲームロジックの描画先を、新UIへ接続
+========================================================= */
+
+const originalRenderDefense = renderDefense;
+const originalRenderZone = renderZone;
+const originalRenderHand = renderHand;
+const originalRender = render;
+
+function ensureEmpty(elementId, text="空き"){
+  const el=document.getElementById(elementId);
+  if(!el)return;
+  if(!el.children.length){
+    el.innerHTML='<div class="slot">'+text+'</div>';
+  }
+}
+
+renderDefense = function(elementId, defense){
+  const el=document.getElementById(elementId);
+  if(!el)return;
+  el.innerHTML="";
+  if(!defense || defense.length===0){
+    el.innerHTML='<div class="slot">防衛軍なし</div>';
+    return;
+  }
+  defense.forEach(entry=>{
+    const slot=document.createElement("div");
+    slot.className="slot defense-slot";
+    if(!entry.revealed){
+      slot.classList.add("face-down");
+      slot.textContent="♜";
+    }else{
+      slot.innerHTML="<strong>"+entry.card.name+"</strong><br>ATK "+entry.card.atk+"<br>DEF "+entry.card.def;
+    }
+    el.appendChild(slot);
+  });
+};
+
+renderZone = function(elementId,cards){
+  const el=document.getElementById(elementId);
+  if(!el)return;
+  el.innerHTML="";
+  if(!cards || cards.length===0){
+    el.innerHTML='<div class="slot">空き</div>';
+    return;
+  }
+  cards.forEach(card=>{
+    const slot=document.createElement("div");
+    slot.className="slot";
+    slot.innerHTML="<strong>"+card.name+"</strong><br>ATK "+(card.atk||"-")+" / DEF "+(card.def||"-");
+    el.appendChild(slot);
+  });
+};
+
+renderHand = function(){
+  const el=document.getElementById("hand");
+  if(!el)return;
+  el.innerHTML="";
+  if(!game.hand.length){
+    el.innerHTML='<div class="card"><div class="card-name">手札なし</div></div>';
+    return;
+  }
+  game.hand.forEach((card,index)=>{
+    const box=document.createElement("div");
+    box.className="card";
+    box.innerHTML="<div class='card-name'>"+card.name+"</div><div class='card-info'>COST "+(card.cost||0)+" / 国力 "+(card.power||0)+"<br>ATK "+(card.atk||"-")+" / DEF "+(card.def||"-")+"<br>"+(card.effect||"")+"</div>";
+    const use=document.createElement("button");
+    use.textContent="使用・配置";
+    use.onclick=()=>playCard(index);
+    box.appendChild(use);
+    const defense=document.createElement("button");
+    defense.textContent="防衛軍へ（0コスト）";
+    defense.disabled=game.playerDefense.length>=RULES.DEFENSE_MAX;
+    if(!defense.disabled) defense.onclick=()=>placeDefenseFromHand(index);
+    box.appendChild(defense);
+    el.appendChild(box);
+  });
+};
+
+function renderEnemyHand(){
+  const el=document.getElementById("enemyHand");
+  if(!el)return;
+  el.innerHTML="";
+  const count=Math.min(6, Math.max(3, game.enemyFront.length + game.enemyRear.length + game.enemyDefense.length?3:0));
+  for(let i=0;i<count;i++){
+    const box=document.createElement("div");
+    box.className="card";
+    box.innerHTML="<div class='card-name'>🂠</div><div class='card-info'>非公開カード</div>";
+    el.appendChild(box);
+  }
+}
+
+render = function(){
+  originalRender();
+
+  renderDefense("playerDefense",game.playerDefense);
+  renderDefense("enemyDefense",game.enemyDefense);
+
+  renderZone("playerFront",game.playerFront);
+  renderZone("enemyFront",game.enemyFront);
+  renderZone("playerRear",game.playerRear);
+  renderZone("enemyRear",game.enemyRear);
+  renderZone("playerAir",game.playerAir);
+  renderZone("enemyAir",game.enemyAir);
+  renderZone("playerSea",[...game.playerSeaMain,...game.playerSeaEscort]);
+  renderZone("enemySea",[...game.enemySeaMain,...game.enemySeaEscort]);
+
+  // Diplomacy area: actual active diplomats if present, otherwise empty slots.
+  renderZone("playerDiplomacy",game.playerDiplomats||[]);
+  renderZone("enemyDiplomacy",[]);
+
+  renderHand();
+  renderEnemyHand();
+
+  const pd=document.getElementById("playerDeckCount");
+  if(pd) pd.textContent=(game.originalDeck?.length ?? 0)+(game.basicDeck?.length ?? 0)+(game.diplomacyDeck?.length ?? 0);
+
+  const ed=document.getElementById("enemyDeckCount");
+  if(ed) ed.textContent="--";
+
+  document.getElementById("enemyPower").textContent="--";
+  document.getElementById("enemyCost").textContent="--";
+  document.getElementById("enemyTurn").textContent=game.turn;
+
+  const log=document.getElementById("log");
+  if(log){
+    log.innerHTML=game.log.slice().reverse().map(x=>"<div>"+x+"</div>").join("");
+  }
+  const msg=document.getElementById("message");
+  if(msg) msg.textContent=game.gameOver?"ゲーム終了":"現在のフェイズ："+game.phase;
+};
+
+const viewport=document.getElementById("gameViewport");
+
+function showPlayerField(){
+  viewport.scrollTo({top:0,behavior:"smooth"});
+}
+function showEnemyField(){
+  viewport.scrollTo({top:window.innerHeight,behavior:"smooth"});
+}
+
+// Swipe: player turn starts on own field; downward swipe reveals enemy.
+// Enemy field upward swipe returns to own field.
+let touchStartY=null;
+viewport.addEventListener("touchstart",e=>{
+  touchStartY=e.changedTouches[0].clientY;
+},{passive:true});
+viewport.addEventListener("touchend",e=>{
+  if(touchStartY===null)return;
+  const end=e.changedTouches[0].clientY;
+  const dy=end-touchStartY;
+  touchStartY=null;
+  if(Math.abs(dy)<45)return;
+  if(dy<0) showEnemyField();
+  else showPlayerField();
+},{passive:true});
+
+// Keep the starting field aligned with the current player's field.
+const oldReset=resetGame;
+resetGame=function(){
+  oldReset();
+  showPlayerField();
+  render();
+};
+
+render();
+</script>
 </body>
 </html>
