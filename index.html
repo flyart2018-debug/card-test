@@ -3,2194 +3,2868 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>カードテスト</title>
+<title>戦争戦略カードゲーム</title>
 
 <style>
+*{box-sizing:border-box}
 
-* {
-    box-sizing: border-box;
+body{
+  margin:0;
+  background:#10131a;
+  color:#eee;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 
-body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #eeeeee;
-    color: #222;
+header{
+  background:#171b24;
+  padding:18px;
+  text-align:center;
+  font-size:24px;
+  font-weight:bold;
 }
 
-header {
-    background: #222;
-    color: white;
-    text-align: center;
-    padding: 18px;
-    font-size: 24px;
-    font-weight: bold;
+main{
+  max-width:1100px;
+  margin:auto;
+  padding:12px;
 }
 
-main {
-    max-width: 700px;
-    margin: auto;
-    padding: 15px;
+.status{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:8px;
+  margin-bottom:12px;
 }
 
-.status {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 7px;
-    margin-bottom: 12px;
+.stat{
+  background:#202632;
+  border-radius:10px;
+  padding:10px;
+  text-align:center;
 }
 
-.box {
-    background: white;
-    border-radius: 12px;
-    padding: 10px 4px;
-    text-align: center;
-    box-shadow: 0 2px 5px #0002;
+.stat b{
+  display:block;
+  font-size:20px;
+  margin-top:4px;
 }
 
-.number {
-    font-size: 19px;
-    font-weight: bold;
-    margin-top: 4px;
+.panel{
+  background:#1b2029;
+  border:1px solid #394252;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:12px;
 }
 
-.section {
-    background: white;
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 12px;
-    box-shadow: 0 2px 5px #0002;
+.panel h2,
+.panel h3{
+  margin-top:0;
 }
 
-.title {
-    font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 10px;
+.grid3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
 }
 
-.slots {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+.grid2{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
 }
 
-.slot {
-    min-height: 90px;
-    border: 2px dashed #aaa;
-    border-radius: 10px;
-    padding: 8px;
-    text-align: center;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.grid1{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
 }
 
-.defense {
-    border-color: #777;
-    background: #fafafa;
+.slot{
+  min-height:95px;
+  border:2px dashed #555f70;
+  border-radius:9px;
+  padding:8px;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
 }
 
-.face-down {
-    background: #333;
-    color: white;
-    border: 2px solid #111;
-    font-size: 30px;
+.defense-slot{
+  background:#0c0f14;
 }
 
-.revealed {
-    background: white;
-    color: #222;
-    border: 2px solid #b33;
+.face-down{
+  font-size:32px;
+  color:#fff;
+  background:#090b10;
 }
 
-.enemy {
-    border-color: #c44;
+.card{
+  background:#242b37;
+  border:1px solid #465163;
+  border-radius:9px;
+  padding:10px;
+  margin-bottom:8px;
 }
 
-.player {
-    border-color: #488;
+.card-name{
+  font-size:17px;
+  font-weight:bold;
+  margin-bottom:5px;
 }
 
-.card {
-    width: 100%;
-    min-height: 100px;
-    background: #f8f8f8;
-    border: 2px solid #aaa;
-    border-radius: 10px;
-    padding: 10px;
-    margin-bottom: 8px;
+.card-info{
+  font-size:12px;
+  line-height:1.5;
+  color:#c3cad5;
 }
 
-.card-name {
-    font-size: 17px;
-    font-weight: bold;
-    margin-bottom: 6px;
+button{
+  width:100%;
+  border:0;
+  border-radius:8px;
+  padding:10px;
+  margin-top:6px;
+  background:#303a4b;
+  color:white;
+  font-weight:bold;
 }
 
-.card-info {
-    font-size: 13px;
-    line-height: 1.5;
+button:disabled{
+  opacity:.45;
 }
 
-.action {
-    width: 100%;
-    margin-top: 6px;
-    border: none;
-    border-radius: 8px;
-    background: #222;
-    color: white;
-    padding: 9px;
-    font-weight: bold;
+.log{
+  max-height:220px;
+  overflow:auto;
+  font-size:12px;
+  line-height:1.6;
+  color:#c5ccd7;
 }
 
-.action:disabled {
-    background: #999;
+.message{
+  text-align:center;
+  font-weight:bold;
+  padding:8px;
+  line-height:1.5;
 }
 
-.message {
-    text-align: center;
-    font-weight: bold;
-    margin-top: 10px;
-    line-height: 1.6;
+.result{
+  display:none;
+  background:#252d39;
+  border-radius:12px;
+  padding:18px;
+  text-align:center;
+  font-size:26px;
+  font-weight:bold;
+  margin-bottom:12px;
 }
 
-.result {
-    display: none;
-    text-align: center;
-    padding: 18px;
-    margin-bottom: 12px;
-    border-radius: 12px;
-    background: white;
-    font-size: 24px;
-    font-weight: bold;
-}
+@media(max-width:760px){
+  .status{
+    grid-template-columns:repeat(3,1fr);
+  }
 
-.end-button,
-.reset-button {
-    width: 100%;
-    border: none;
-    border-radius: 12px;
-    color: white;
-    padding: 15px;
-    font-size: 17px;
-    font-weight: bold;
+  .grid3{
+    grid-template-columns:repeat(2,1fr);
+  }
 }
-
-.end-button {
-    background: #222;
-}
-
-.end-button:disabled {
-    background: #999;
-}
-
-.reset-button {
-    background: #777;
-    margin-top: 8px;
-}
-
 </style>
 </head>
 
 <body>
 
 <header>
-カードテスト
+戦争戦略カードゲーム
 </header>
 
 <main>
 
-<div class="result" id="result"></div>
-
-
-<!-- ==============================
-     ステータス
-============================== -->
+<div id="result" class="result"></div>
 
 <div class="status">
 
-    <div class="box">
-        <div>ターン</div>
-        <div class="number" id="turn">1</div>
-    </div>
+  <div class="stat">
+    ターン
+    <b id="turn">0</b>
+  </div>
 
-    <div class="box">
-        <div>国力</div>
-        <div class="number" id="playerPower">3</div>
-    </div>
+  <div class="stat">
+    国力
+    <b id="power">0</b>
+  </div>
 
-    <div class="box">
-        <div>CPU防衛軍</div>
-        <div class="number" id="enemyDefenseCount">5</div>
-    </div>
+  <div class="stat">
+    コスト
+    <b id="cost">0</b>
+  </div>
 
-    <div class="box">
-        <div>CPU拠点</div>
-        <div class="number" id="cpuBase">3</div>
-    </div>
+  <div class="stat">
+    拠点
+    <b id="bases">3</b>
+  </div>
 
-    <div class="box">
-        <div>残コスト</div>
-        <div class="number" id="cost">3</div>
-    </div>
+  <div class="stat">
+    防衛軍
+    <b id="defenseCount">5</b>
+  </div>
 
-</div>
-
-
-<!-- ==============================
-     CPU防衛軍
-============================== -->
-
-<div class="section">
-
-    <div class="title">
-        CPU 防衛軍
-    </div>
-
-    <div
-        class="slots"
-        id="enemyDefense">
-    </div>
+  <div class="stat">
+    手札
+    <b id="handCount">0</b>
+  </div>
 
 </div>
 
 
-<!-- ==============================
-     CPU前線
-============================== -->
+<div class="panel">
 
-<div class="section">
+  <h3>ターン操作</h3>
 
-    <div class="title">
-        CPU 前線
-    </div>
+  <button onclick="beginTurn()">
+    開始フェイズ・ドロー
+  </button>
 
-    <div
-        class="slots"
-        id="enemyFront">
-    </div>
+  <button onclick="increasePower()">
+    コスト5 → 国力＋1
+  </button>
 
-</div>
-
-
-<!-- ==============================
-     自分防衛軍
-============================== -->
-
-<div class="section">
-
-    <div class="title">
-        あなたの防衛軍
-    </div>
-
-    <div
-        class="slots"
-        id="playerDefense">
-    </div>
-
-</div>
-
-
-<!-- ==============================
-     自分前線
-============================== -->
-
-<div class="section">
-
-    <div class="title">
-        あなたの前線
-    </div>
-
-    <div
-        class="slots"
-        id="front">
-    </div>
-
-</div>
-
-
-<!-- ==============================
-     手札
-============================== -->
-
-<div class="section">
-
-    <div class="title">
-        手札
-    </div>
-
-    <div id="hand"></div>
-
-    <div
-        class="message"
-        id="message">
-        戦闘テスト
-    </div>
-
-</div>
-
-
-<button
-    class="end-button"
-    id="endButton"
-    onclick="endTurn()">
-
+  <button onclick="finishTurn()">
     ターン終了
+  </button>
 
-</button>
-
-
-<button
-    class="reset-button"
-    onclick="resetGame()">
-
+  <button onclick="resetGame()">
     ゲームリセット
+  </button>
 
-</button>
+</div>
+
+
+<div class="panel">
+
+  <h3>メッセージ</h3>
+
+  <div id="message" class="message">
+    ゲーム開始
+  </div>
+
+</div>
+
+
+<!-- 自分 -->
+
+<div class="panel">
+
+  <h2>自分</h2>
+
+  <h3>防衛軍</h3>
+  <div id="playerDefense" class="grid3"></div>
+
+  <h3>前線</h3>
+  <div id="playerFront" class="grid3"></div>
+
+  <h3>後衛</h3>
+  <div id="playerRear" class="grid2"></div>
+
+  <h3>空軍</h3>
+  <div id="playerAir" class="grid1"></div>
+
+  <h3>海軍</h3>
+  <div id="playerSea" class="grid2"></div>
+
+  <h3>英雄</h3>
+  <div id="playerHeroes" class="grid3"></div>
+
+  <h3>外交官</h3>
+  <div id="playerDiplomats" class="grid3"></div>
+
+</div>
+
+
+<!-- 相手 -->
+
+<div class="panel">
+
+  <h2>相手</h2>
+
+  <h3>防衛軍</h3>
+  <div id="enemyDefense" class="grid3"></div>
+
+  <h3>前線</h3>
+  <div id="enemyFront" class="grid3"></div>
+
+  <h3>後衛</h3>
+  <div id="enemyRear" class="grid2"></div>
+
+  <h3>空軍</h3>
+  <div id="enemyAir" class="grid1"></div>
+
+  <h3>海軍</h3>
+  <div id="enemySea" class="grid2"></div>
+
+</div>
+
+
+<!-- 手札 -->
+
+<div class="panel">
+
+  <h2>手札</h2>
+
+  <div id="hand"></div>
+
+</div>
+
+
+<!-- ログ -->
+
+<div class="panel">
+
+  <h3>ゲームログ</h3>
+
+  <div id="log" class="log"></div>
+
+</div>
 
 </main>
 
 
 <script>
 
-/* ==================================================
-   ゲーム変数
-================================================== */
+/* =========================================================
+   基本ルール
+========================================================= */
 
-let turn;
+const RULES = {
 
-let cost;
+  BASES: 3,
 
-let playerPower;
-let cpuPower;
+  DEFENSE_MAX: 5,
 
-let playerBase;
-let cpuBase;
+  FRONT_MAX: 3,
 
-let playerDefense;
-let enemyDefense;
+  REAR_MAX: 2,
 
-let playerFront;
-let enemyFront;
+  AIR_MAX: 1,
 
-let hand;
+  SEA_MAIN_MAX: 1,
 
-let playerDeck;
-let cpuDeck;
+  SEA_ESCORT_MAX: 1,
 
-let playerOriginalDeck;
-let cpuOriginalDeck;
+  POWER_MAX: 10,
 
-let canPlay;
-let gameOver;
+  COST_PER_TURN: 3,
+
+  POWER_UP_COST: 5
+
+};
 
 
-/* ==================================================
-   オリジナルデッキ
-================================================== */
+/* =========================================================
+   基本カード 15枚
+========================================================= */
 
-function createOriginalDeck() {
+const BASIC_CARDS = [
 
-    return [
+  {
+    name:"歩兵",
+    type:"land",
+    cost:2,
+    power:0,
+    atk:2000,
+    def:2500,
+    effect:"標準"
+  },
 
-        /* =========================
-           歩兵
-        ========================= */
+  {
+    name:"槍兵",
+    type:"land",
+    cost:2,
+    power:0,
+    atk:2500,
+    def:2000,
+    effect:"攻撃型"
+  },
 
-        {
-            name: "歩兵",
-            type: "unit",
-            cost: 0,
-            attack: 2000,
-            defense: 2500
-        },
+  {
+    name:"対空魔導師",
+    type:"land",
+    cost:3,
+    power:0,
+    atk:2000,
+    def:2000,
+    effect:"空軍を攻撃可能"
+  },
 
-        {
-            name: "歩兵",
-            type: "unit",
-            cost: 0,
-            attack: 2000,
-            defense: 2500
-        },
+  {
+    name:"騎兵",
+    type:"land",
+    cost:3,
+    power:1,
+    atk:3000,
+    def:2000,
+    effect:"速攻",
+    rush:true
+  },
 
-        {
-            name: "歩兵",
-            type: "unit",
-            cost: 0,
-            attack: 2000,
-            defense: 2500
-        },
+  {
+    name:"重装兵",
+    type:"land",
+    cost:3,
+    power:1,
+    atk:2000,
+    def:3500,
+    effect:"防御型"
+  }
 
-        {
-            name: "歩兵",
-            type: "unit",
-            cost: 0,
-            attack: 2000,
-            defense: 2500
-        },
-
-        {
-            name: "歩兵",
-            type: "unit",
-            cost: 0,
-            attack: 2000,
-            defense: 2500
-        },
-
-
-        /* =========================
-           槍兵
-        ========================= */
-
-        {
-            name: "槍兵",
-            type: "unit",
-            cost: 0,
-            attack: 2500,
-            defense: 2000
-        },
-
-        {
-            name: "槍兵",
-            type: "unit",
-            cost: 0,
-            attack: 2500,
-            defense: 2000
-        },
-
-        {
-            name: "槍兵",
-            type: "unit",
-            cost: 0,
-            attack: 2500,
-            defense: 2000
-        },
-
-        {
-            name: "槍兵",
-            type: "unit",
-            cost: 0,
-            attack: 2500,
-            defense: 2000
-        },
-
-        {
-            name: "槍兵",
-            type: "unit",
-            cost: 0,
-            attack: 2500,
-            defense: 2000
-        },
+];
 
 
-        /* =========================
-           弓兵
-        ========================= */
+/* =========================================================
+   基本外交 15枚
+========================================================= */
 
-        {
-            name: "弓兵",
-            type: "unit",
-            cost: 0,
-            attack: 1800,
-            defense: 1800
-        },
+const BASIC_DIPLOMACY = [
 
-        {
-            name: "弓兵",
-            type: "unit",
-            cost: 0,
-            attack: 1800,
-            defense: 1800
-        },
+  {
+    name:"戦線援護",
+    type:"tactic",
+    cost:2,
+    power:0,
+    effect:"前線1枚 ATK＋1000"
+  },
 
-        {
-            name: "弓兵",
-            type: "unit",
-            cost: 0,
-            attack: 1800,
-            defense: 1800
-        },
+  {
+    name:"緊急防衛令",
+    type:"tactic",
+    cost:2,
+    power:0,
+    effect:"前線1枚 DEF＋1500"
+  },
 
-        {
-            name: "弓兵",
-            type: "unit",
-            cost: 0,
-            attack: 1800,
-            defense: 1800
-        },
+  {
+    name:"緊急徴兵",
+    type:"tactic",
+    cost:3,
+    power:0,
+    effect:"基本カード1枚を手札へ"
+  },
 
-        {
-            name: "弓兵",
-            type: "unit",
-            cost: 0,
-            attack: 1800,
-            defense: 1800
-        },
+  {
+    name:"国力支援",
+    type:"tactic",
+    cost:3,
+    power:1,
+    effect:"次に使用するカードのコスト－1"
+  },
 
+  {
+    name:"戦術撤退",
+    type:"tactic",
+    cost:2,
+    power:1,
+    effect:"前線1枚を後衛へ"
+  }
 
-        /* =========================
-           対空魔導師
-        ========================= */
-
-        {
-            name: "対空魔導師",
-            type: "unit",
-            cost: 1,
-            attack: 2000,
-            defense: 2000
-        },
-
-        {
-            name: "対空魔導師",
-            type: "unit",
-            cost: 1,
-            attack: 2000,
-            defense: 2000
-        },
-
-        {
-            name: "対空魔導師",
-            type: "unit",
-            cost: 1,
-            attack: 2000,
-            defense: 2000
-        },
+];
 
 
-        /* =========================
-           騎兵
-        ========================= */
+/* =========================================================
+   オリジナルカード 30枚
+========================================================= */
 
-        {
-            name: "騎兵",
-            type: "unit",
-            cost: 1,
-            attack: 3000,
-            defense: 2000
-        },
+const ORIGINAL_CARDS = [
 
-        {
-            name: "騎兵",
-            type: "unit",
-            cost: 1,
-            attack: 3000,
-            defense: 2000
-        },
+  {
+    name:"突撃兵",
+    type:"land",
+    cost:3,
+    power:1,
+    atk:3500,
+    def:2000,
+    effect:"速攻",
+    rush:true
+  },
 
-        {
-            name: "騎兵",
-            type: "unit",
-            cost: 1,
-            attack: 3000,
-            defense: 2000
-        },
+  {
+    name:"対戦車兵",
+    type:"land",
+    cost:3,
+    power:1,
+    atk:3000,
+    def:2500,
+    effect:"海上攻撃時 ATK＋1000"
+  },
+
+  {
+    name:"魔導砲兵",
+    type:"land",
+    cost:4,
+    power:2,
+    atk:3500,
+    def:3000,
+    effect:"海軍・空軍を攻撃可能"
+  },
+
+  {
+    name:"近衛兵",
+    type:"land",
+    cost:4,
+    power:2,
+    atk:2500,
+    def:4500,
+    effect:"英雄がいる間 DEF＋500"
+  },
+
+  {
+    name:"偵察兵",
+    type:"land",
+    cost:2,
+    power:1,
+    atk:1500,
+    def:1500,
+    effect:"配置時、防衛軍1枚を確認"
+  },
+
+  {
+    name:"破城兵",
+    type:"land",
+    cost:5,
+    power:3,
+    atk:4500,
+    def:2500,
+    effect:"前線0枚時、防衛軍攻撃＋1"
+  },
+
+  {
+    name:"戦闘飛竜",
+    type:"air",
+    cost:4,
+    power:2,
+    atk:4000,
+    def:2500,
+    effect:"空戦"
+  },
+
+  {
+    name:"爆撃魔導艇",
+    type:"air",
+    cost:5,
+    power:2,
+    atk:3500,
+    def:2500,
+    effect:"陸上攻撃・後衛攻撃可能"
+  },
+
+  {
+    name:"国力爆撃機",
+    type:"air",
+    cost:5,
+    power:3,
+    atk:3000,
+    def:2000,
+    effect:"国力カード1枚破壊"
+  },
+
+  {
+    name:"偵察飛行隊",
+    type:"air",
+    cost:3,
+    power:1,
+    atk:2500,
+    def:2000,
+    effect:"防衛軍2枚を確認"
+  },
+
+  {
+    name:"制空戦闘隊",
+    type:"air",
+    cost:6,
+    power:3,
+    atk:5000,
+    def:3000,
+    effect:"敵空軍破壊時＋1コスト"
+  },
+
+  {
+    name:"魔導戦艦",
+    type:"seaMain",
+    cost:6,
+    power:3,
+    atk:5500,
+    def:5000,
+    effect:"陸上・海上を攻撃可能"
+  },
+
+  {
+    name:"装甲巡洋艦",
+    type:"seaMain",
+    cost:4,
+    power:2,
+    atk:3500,
+    def:3500,
+    effect:"陸上・海上を攻撃可能"
+  },
+
+  {
+    name:"高速駆逐艦",
+    type:"seaEscort",
+    cost:3,
+    power:1,
+    atk:2500,
+    def:3000,
+    effect:"海上攻撃を優先ブロック"
+  },
+
+  {
+    name:"深海潜水艦",
+    type:"seaEscort",
+    cost:5,
+    power:2,
+    atk:4000,
+    def:2000,
+    effect:"通常攻撃を受けない"
+  },
+
+  {
+    name:"魔導空母",
+    type:"seaMain",
+    cost:7,
+    power:4,
+    atk:4500,
+    def:5000,
+    effect:"空軍カード1枚セット可能"
+  },
+
+  {
+    name:"宮廷外交官",
+    type:"diplomat",
+    cost:3,
+    power:1,
+    effect:"基本カードのコスト－1"
+  },
+
+  {
+    name:"情報屋",
+    type:"diplomat",
+    cost:3,
+    power:1,
+    effect:"相手ドロー時、防衛軍確認"
+  },
+
+  {
+    name:"商人ギルド代表",
+    type:"diplomat",
+    cost:4,
+    power:2,
+    effect:"ターン開始時コスト＋1"
+  },
+
+  {
+    name:"密使",
+    type:"diplomat",
+    cost:4,
+    power:2,
+    effect:"国力破壊の対象外"
+  },
+
+  {
+    name:"魔法研究者",
+    type:"diplomat",
+    cost:5,
+    power:3,
+    effect:"国力条件を1回－1"
+  },
+
+  {
+    name:"緊急動員",
+    type:"tactic",
+    cost:2,
+    power:0,
+    effect:"基本カード1枚を手札へ"
+  },
+
+  {
+    name:"奇襲作戦",
+    type:"tactic",
+    cost:3,
+    power:1,
+    effect:"前線1枚に速攻"
+  },
+
+  {
+    name:"戦線突破",
+    type:"tactic",
+    cost:4,
+    power:2,
+    effect:"前線ATK＋2000"
+  },
+
+  {
+    name:"空爆要請",
+    type:"tactic",
+    cost:3,
+    power:1,
+    effect:"空軍ATK＋2000"
+  },
+
+  {
+    name:"緊急修理",
+    type:"tactic",
+    cost:3,
+    power:1,
+    effect:"海上DEF＋2000"
+  },
+
+  {
+    name:"国力徴収",
+    type:"tactic",
+    cost:5,
+    power:3,
+    effect:"相手国力1枚破壊"
+  },
+
+  {
+    name:"強制徴兵",
+    type:"tactic",
+    cost:4,
+    power:2,
+    effect:"構築デッキから基本カード取得"
+  },
+
+  {
+    name:"偽情報",
+    type:"tactic",
+    cost:3,
+    power:1,
+    effect:"防衛軍2枚確認・順番変更"
+  },
+
+  {
+    name:"永久追放",
+    type:"tactic",
+    cost:7,
+    power:4,
+    effect:"ユニット1枚を永久除外"
+  }
+
+];
 
 
-        /* =========================
-           魔導兵
-        ========================= */
+/* =========================================================
+   英雄10枚
+   ※具体性能は未確定なので枠のみ
+========================================================= */
 
-        {
-            name: "魔導兵",
-            type: "unit",
-            cost: 1,
-            attack: 2500,
-            defense: 2500
-        },
+const HERO_POOL = [];
 
-        {
-            name: "魔導兵",
-            type: "unit",
-            cost: 1,
-            attack: 2500,
-            defense: 2500
-        },
+for(let i=1;i<=10;i++){
 
-        {
-            name: "魔導兵",
-            type: "unit",
-            cost: 1,
-            attack: 2500,
-            defense: 2500
-        },
+  HERO_POOL.push({
+
+    name:"英雄候補"+i,
+
+    type:"hero",
+
+    cost:0,
+
+    power:0,
+
+    effect:"英雄性能未確定"
+
+  });
+
+}
 
 
-        /* =========================
-           重装兵
-        ========================= */
+/* =========================================================
+   ゲーム状態
+========================================================= */
 
-        {
-            name: "重装兵",
-            type: "unit",
-            cost: 1,
-            attack: 1500,
-            defense: 3500
-        },
+const game = {
 
-        {
-            name: "重装兵",
-            type: "unit",
-            cost: 1,
-            attack: 1500,
-            defense: 3500
-        },
+  turn:0,
 
-        {
-            name: "重装兵",
-            type: "unit",
-            cost: 1,
-            attack: 1500,
-            defense: 3500
-        }
+  phase:"start",
 
+  cost:0,
+
+  power:0,
+
+  bases:3,
+
+  gameOver:false,
+
+  nextDiscount:0,
+
+  hand:[],
+
+  basicDeck:[],
+
+  diplomacyDeck:[],
+
+  originalDeck:[],
+
+  buildDeck:[],
+
+  playerDefense:[],
+
+  enemyDefense:[],
+
+  playerFront:[],
+
+  enemyFront:[],
+
+  playerRear:[],
+
+  enemyRear:[],
+
+  playerAir:[],
+
+  enemyAir:[],
+
+  playerSeaMain:[],
+
+  enemySeaMain:[],
+
+  playerSeaEscort:[],
+
+  enemySeaEscort:[],
+
+  playerHeroes:[],
+
+  playerDiplomats:[],
+
+  permanentlyRemoved:[],
+
+  log:[]
+
+};
+
+
+/* =========================================================
+   ユーティリティ
+========================================================= */
+
+function cloneCard(card){
+
+  return JSON.parse(
+    JSON.stringify(card)
+  );
+
+}
+
+
+function shuffle(deck){
+
+  for(
+    let i=deck.length-1;
+    i>0;
+    i--
+  ){
+
+    const j=
+      Math.floor(
+        Math.random()*(i+1)
+      );
+
+    [
+      deck[i],
+      deck[j]
+    ]=[
+      deck[j],
+      deck[i]
     ];
 
-}
-
-
-/* ==================================================
-   ランダムカード
-================================================== */
-
-function drawRandomCard(deck) {
-
-    if (deck.length === 0) {
-        return null;
-    }
-
-    const index =
-        Math.floor(
-            Math.random() * deck.length
-        );
-
-    return deck.splice(index, 1)[0];
+  }
 
 }
 
 
-/* ==================================================
-   初期防衛軍5枚
-================================================== */
+function draw(deck){
 
-function createStartingDefense(originalDeck) {
+  if(!deck.length){
 
-    const defense = [];
+    return null;
 
-    for (let i = 0; i < 5; i++) {
+  }
 
-        const card =
-            drawRandomCard(originalDeck);
+  return deck.shift();
 
-        if (card) {
+}
 
-            defense.push({
 
-                card: card,
+function createCopies(list,count){
 
-                revealed: false
+  const result=[];
 
-            });
+  list.forEach(card=>{
 
-        }
+    for(
+      let i=0;
+      i<count;
+      i++
+    ){
+
+      result.push(
+        cloneCard(card)
+      );
 
     }
 
-    return defense;
+  });
+
+  return shuffle(result);
 
 }
 
 
-/* ==================================================
-   シャッフル
-================================================== */
+/* =========================================================
+   ログ
+========================================================= */
 
-function shuffleDeck(deck) {
+function addLog(text){
 
-    for (
-        let i = deck.length - 1;
-        i > 0;
-        i--
-    ) {
+  game.log.push(
 
-        const j =
-            Math.floor(
-                Math.random() * (i + 1)
-            );
+    "T" +
+    game.turn +
+    "｜" +
+    text
 
-        [
-            deck[i],
-            deck[j]
-        ] =
-        [
-            deck[j],
-            deck[i]
-        ];
+  );
 
-    }
+  if(game.log.length>80){
+
+    game.log.shift();
+
+  }
 
 }
 
 
-/* ==================================================
+/* =========================================================
    ゲーム開始
-================================================== */
+========================================================= */
 
-function resetGame() {
+function resetGame(){
 
-    turn = 1;
+  game.turn=0;
 
-    /*
-       現段階ではテスト用
-       初期コスト3
-    */
+  game.phase="start";
 
-    cost = 3;
+  game.cost=0;
+
+  game.power=0;
+
+  game.bases=3;
+
+  game.gameOver=false;
+
+  game.nextDiscount=0;
+
+  game.hand=[];
+
+  game.buildDeck=[];
+
+  game.playerFront=[];
+
+  game.enemyFront=[];
+
+  game.playerRear=[];
+
+  game.enemyRear=[];
+
+  game.playerAir=[];
+
+  game.enemyAir=[];
+
+  game.playerSeaMain=[];
+
+  game.enemySeaMain=[];
+
+  game.playerSeaEscort=[];
+
+  game.enemySeaEscort=[];
+
+  game.playerHeroes=[];
+
+  game.playerDiplomats=[];
+
+  game.permanentlyRemoved=[];
+
+  game.log=[];
 
 
-    /*
-       国力はまだテスト用固定
-    */
+  /*
+    基本カード15枚
+  */
 
-    playerPower = 3;
-    cpuPower = 3;
-
-
-    playerBase = 3;
-    cpuBase = 3;
-
-
-    /*
-       デッキ作成
-    */
-
-    playerOriginalDeck =
-        createOriginalDeck();
-
-    cpuOriginalDeck =
-        createOriginalDeck();
+  game.basicDeck=
+    createCopies(
+      BASIC_CARDS,
+      3
+    );
 
 
-    /*
-       オリジナルデッキから
-       防衛軍5枚をランダム選出
-    */
+  /*
+    基本外交15枚
+  */
 
-    playerDefense =
-        createStartingDefense(
-            playerOriginalDeck
+  game.diplomacyDeck=
+    createCopies(
+      BASIC_DIPLOMACY,
+      3
+    );
+
+
+  /*
+    オリジナル30枚
+  */
+
+  game.originalDeck=
+    ORIGINAL_CARDS.map(
+      cloneCard
+    );
+
+
+  shuffle(
+    game.originalDeck
+  );
+
+
+  /*
+    ★ 重要
+    オリジナルデッキから
+    防衛軍5枚をランダム選出
+  */
+
+  game.playerDefense=[];
+
+  for(
+    let i=0;
+    i<RULES.DEFENSE_MAX;
+    i++
+  ){
+
+    const card=
+      draw(
+        game.originalDeck
+      );
+
+    if(card){
+
+      game.playerDefense.push({
+
+        card:card,
+
+        revealed:false
+
+      });
+
+    }
+
+  }
+
+
+  /*
+    CPU側もテスト用に
+    オリジナルデッキから5枚
+  */
+
+  const cpuOriginal=
+    ORIGINAL_CARDS.map(
+      cloneCard
+    );
+
+  shuffle(cpuOriginal);
+
+  game.enemyDefense=[];
+
+  for(
+    let i=0;
+    i<RULES.DEFENSE_MAX;
+    i++
+  ){
+
+    const card=
+      cpuOriginal.shift();
+
+    if(card){
+
+      game.enemyDefense.push({
+
+        card:card,
+
+        revealed:false
+
+      });
+
+    }
+
+  }
+
+
+  /*
+    CPU前線のテストカード
+  */
+
+  game.enemyFront.push({
+
+    name:"歩兵",
+
+    type:"land",
+
+    cost:2,
+
+    power:0,
+
+    atk:2000,
+
+    def:2500,
+
+    ready:true
+
+  });
+
+
+  addLog(
+    "ゲーム開始：防衛軍5枚を裏向きで配置"
+  );
+
+
+  render();
+
+}
+
+
+/* =========================================================
+   ターン開始
+========================================================= */
+
+function beginTurn(){
+
+  if(game.gameOver){
+
+    return;
+
+  }
+
+
+  game.turn++;
+
+  game.phase="main";
+
+
+  /*
+    毎ターンコスト3追加
+  */
+
+  game.cost+=
+    RULES.COST_PER_TURN;
+
+
+  /*
+    基本カードまたは外交カードを1枚
+  */
+
+  let firstCard;
+
+  if(game.turn%2===1){
+
+    firstCard=
+      draw(
+        game.basicDeck
+      );
+
+  }
+  else{
+
+    firstCard=
+      draw(
+        game.diplomacyDeck
+      );
+
+  }
+
+
+  if(firstCard){
+
+    game.hand.push(
+      firstCard
+    );
+
+  }
+
+
+  /*
+    オリジナル/構築から1枚
+  */
+
+  let secondCard;
+
+  if(
+    game.buildDeck.length>0
+  ){
+
+    secondCard=
+      draw(
+        game.buildDeck
+      );
+
+  }
+  else{
+
+    secondCard=
+      draw(
+        game.originalDeck
+      );
+
+  }
+
+
+  if(secondCard){
+
+    game.hand.push(
+      secondCard
+    );
+
+  }
+
+
+  /*
+    前ターン以前に出た
+    カードを攻撃可能へ
+  */
+
+  game.playerFront.forEach(
+    card=>{
+
+      if(!card.rush){
+
+        card.ready=true;
+
+      }
+
+    }
+  );
+
+
+  game.playerAir.forEach(
+    card=>{
+
+      card.ready=true;
+
+    }
+  );
+
+
+  game.playerSeaMain.forEach(
+    card=>{
+
+      card.ready=true;
+
+    }
+  );
+
+
+  game.playerSeaEscort.forEach(
+    card=>{
+
+      card.ready=true;
+
+    }
+  );
+
+
+  addLog(
+    "開始フェイズ：コスト＋3、カード2枚ドロー"
+  );
+
+
+  render();
+
+}
+
+
+/* =========================================================
+   国力
+========================================================= */
+
+function increasePower(){
+
+  if(game.gameOver){
+
+    return;
+
+  }
+
+
+  if(
+    game.power>=
+    RULES.POWER_MAX
+  ){
+
+    addLog(
+      "国力は上限10"
+    );
+
+    render();
+
+    return;
+
+  }
+
+
+  if(
+    game.cost<
+    RULES.POWER_UP_COST
+  ){
+
+    addLog(
+      "国力上昇にはコスト5が必要"
+    );
+
+    render();
+
+    return;
+
+  }
+
+
+  game.cost-=
+    RULES.POWER_UP_COST;
+
+
+  game.power++;
+
+
+  addLog(
+    "国力＋1 → "+game.power
+  );
+
+
+  render();
+
+}
+
+
+/* =========================================================
+   カード使用条件
+========================================================= */
+
+function canUseCard(card){
+
+  let requiredCost=
+    card.cost;
+
+
+  if(
+    game.nextDiscount>0
+  ){
+
+    requiredCost=
+      Math.max(
+        0,
+        requiredCost-
+        game.nextDiscount
+      );
+
+  }
+
+
+  if(
+    game.cost<
+    requiredCost
+  ){
+
+    addLog(
+      "コスト不足："+card.name
+    );
+
+    return false;
+
+  }
+
+
+  if(
+    game.power<
+    card.power
+  ){
+
+    addLog(
+      "国力不足："+card.name
+    );
+
+    return false;
+
+  }
+
+
+  return true;
+
+}
+
+
+/* =========================================================
+   手札から前線・空軍・海軍・外交官
+========================================================= */
+
+function playCard(index){
+
+  if(game.gameOver){
+
+    return;
+
+  }
+
+
+  const card=
+    game.hand[index];
+
+
+  if(!card){
+
+    return;
+
+  }
+
+
+  if(!canUseCard(card)){
+
+    render();
+
+    return;
+
+  }
+
+
+  let actualCost=
+    card.cost;
+
+
+  if(
+    game.nextDiscount>0
+  ){
+
+    actualCost=
+      Math.max(
+        0,
+        actualCost-
+        game.nextDiscount
+      );
+
+    game.nextDiscount=0;
+
+  }
+
+
+  /*
+    陸上
+  */
+
+  if(
+    card.type==="land"
+  ){
+
+    if(
+      game.playerFront.length>=
+      RULES.FRONT_MAX
+    ){
+
+      addLog(
+        "前線は3枚まで"
+      );
+
+      render();
+
+      return;
+
+    }
+
+
+    game.cost-=actualCost;
+
+    game.hand.splice(
+      index,
+      1
+    );
+
+
+    game.playerFront.push({
+
+      ...card,
+
+      ready:
+        card.rush===true
+
+    });
+
+
+    addLog(
+      "前線配置："+card.name
+    );
+
+
+    render();
+
+    return;
+
+  }
+
+
+  /*
+    空軍
+  */
+
+  if(
+    card.type==="air"
+  ){
+
+    if(
+      game.playerAir.length>=
+      RULES.AIR_MAX
+    ){
+
+      addLog(
+        "空軍は1枚まで"
+      );
+
+      render();
+
+      return;
+
+    }
+
+
+    game.cost-=actualCost;
+
+    game.hand.splice(
+      index,
+      1
+    );
+
+
+    game.playerAir.push({
+
+      ...card,
+
+      ready:true
+
+    });
+
+
+    addLog(
+      "空軍配置："+card.name
+    );
+
+
+    render();
+
+    return;
+
+  }
+
+
+  /*
+    海軍主力
+  */
+
+  if(
+    card.type==="seaMain"
+  ){
+
+    if(
+      game.playerSeaMain.length>=
+      RULES.SEA_MAIN_MAX
+    ){
+
+      addLog(
+        "海軍主力は1枚まで"
+      );
+
+      render();
+
+      return;
+
+    }
+
+
+    game.cost-=actualCost;
+
+    game.hand.splice(
+      index,
+      1
+    );
+
+
+    game.playerSeaMain.push({
+
+      ...card,
+
+      ready:true
+
+    });
+
+
+    addLog(
+      "海軍主力配置："+card.name
+    );
+
+
+    render();
+
+    return;
+
+  }
+
+
+  /*
+    海軍護衛
+  */
+
+  if(
+    card.type==="seaEscort"
+  ){
+
+    if(
+      game.playerSeaEscort.length>=
+      RULES.SEA_ESCORT_MAX
+    ){
+
+      addLog(
+        "海軍護衛は1枚まで"
+      );
+
+      render();
+
+      return;
+
+    }
+
+
+    game.cost-=actualCost;
+
+    game.hand.splice(
+      index,
+      1
+    );
+
+
+    game.playerSeaEscort.push({
+
+      ...card,
+
+      ready:true
+
+    });
+
+
+    addLog(
+      "海軍護衛配置："+card.name
+    );
+
+
+    render();
+
+    return;
+
+  }
+
+
+  /*
+    外交官
+  */
+
+  if(
+    card.type==="diplomat"
+  ){
+
+    game.cost-=actualCost;
+
+    game.hand.splice(
+      index,
+      1
+    );
+
+
+    game.playerDiplomats.push(
+      card
+    );
+
+
+    addLog(
+      "外交官配置："+card.name
+    );
+
+
+    render();
+
+    return;
+
+  }
+
+
+  /*
+    戦術カード
+  */
+
+  if(
+    card.type==="tactic"
+  ){
+
+    game.cost-=actualCost;
+
+    game.hand.splice(
+      index,
+      1
+    );
+
+
+    resolveTactic(
+      card
+    );
+
+
+    render();
+
+  }
+
+}
+
+
+/* =========================================================
+   手札 → 防衛軍
+   ★ 完全0コスト
+========================================================= */
+
+function placeDefenseFromHand(index){
+
+  if(game.gameOver){
+
+    return;
+
+  }
+
+
+  if(
+    game.playerDefense.length>=
+    RULES.DEFENSE_MAX
+  ){
+
+    addLog(
+      "防衛軍は最大5枚"
+    );
+
+    render();
+
+    return;
+
+  }
+
+
+  const card=
+    game.hand[index];
+
+
+  if(!card){
+
+    return;
+
+  }
+
+
+  /*
+    ★ 防衛軍配置にはコスト不要
+    ★ 国力も消費しない
+  */
+
+  game.playerDefense.push({
+
+    card:card,
+
+    revealed:false
+
+  });
+
+
+  game.hand.splice(
+    index,
+    1
+  );
+
+
+  addLog(
+    "手札から防衛軍へ配置："+card.name+
+    "（0コスト）"
+  );
+
+
+  render();
+
+}
+
+
+/* =========================================================
+   戦術カード
+========================================================= */
+
+function resolveTactic(card){
+
+  switch(
+    card.name
+  ){
+
+    case "戦線援護":
+
+      if(
+        game.playerFront[0]
+      ){
+
+        game.playerFront[0].atk+=
+          1000;
+
+      }
+
+      break;
+
+
+    case "緊急防衛令":
+
+      if(
+        game.playerFront[0]
+      ){
+
+        game.playerFront[0].def+=
+          1500;
+
+      }
+
+      break;
+
+
+    case "緊急徴兵":
+
+    case "緊急動員":{
+
+      const basic=
+        draw(
+          game.basicDeck
         );
 
-    enemyDefense =
-        createStartingDefense(
-            cpuOriginalDeck
+      if(basic){
+
+        game.hand.push(
+          basic
         );
 
+      }
+
+      break;
+
+    }
+
+
+    case "国力支援":
+
+      game.nextDiscount=1;
+
+      break;
+
+
+    case "戦術撤退":
+
+      if(
+        game.playerFront.length>0 &&
+        game.playerRear.length<
+        RULES.REAR_MAX
+      ){
+
+        game.playerRear.push(
+          game.playerFront.shift()
+        );
+
+      }
+
+      break;
+
+
+    case "奇襲作戦":
+
+      if(
+        game.playerFront[0]
+      ){
+
+        game.playerFront[0].ready=true;
+
+      }
+
+      break;
+
+
+    case "戦線突破":
+
+      if(
+        game.playerFront[0]
+      ){
+
+        game.playerFront[0].atk+=
+          2000;
+
+      }
+
+      break;
+
+
+    case "空爆要請":
+
+      if(
+        game.playerAir[0]
+      ){
+
+        game.playerAir[0].atk+=
+          2000;
+
+      }
+
+      break;
+
+
+    case "緊急修理":{
+
+      const ship=
+        game.playerSeaMain[0] ||
+        game.playerSeaEscort[0];
+
+      if(ship){
+
+        ship.def+=
+          2000;
+
+      }
+
+      break;
+
+    }
+
+
+    case "強制徴兵":{
+
+      const card=
+        game.buildDeck.length>0
+          ? draw(game.buildDeck)
+          : draw(game.originalDeck);
+
+      if(card){
+
+        game.hand.push(
+          card
+        );
+
+      }
+
+      break;
+
+    }
+
+
+    case "国力徴収":
+
+      addLog(
+        "相手の国力破壊：相手側処理へ"
+      );
+
+      break;
+
+
+    case "偽情報":
+
+      addLog(
+        "相手防衛軍2枚確認・順番変更"
+      );
+
+      break;
+
+
+    case "永久追放":
+
+      addLog(
+        "永久追放：対象選択待ち"
+      );
+
+      break;
+
+  }
+
+}
+
+
+/* =========================================================
+   防衛軍への攻撃
+========================================================= */
+
+function attackEnemyDefense(){
+
+  if(game.gameOver){
+
+    return;
+
+  }
+
+
+  /*
+    防衛軍への攻撃条件
+    前線0枚
+  */
+
+  if(
+    game.enemyFront.length>0
+  ){
+
+    addLog(
+      "敵前線が残っているため防衛軍を攻撃できない"
+    );
+
+    render();
+
+    return;
+
+  }
+
+
+  /*
+    防衛軍0枚
+    → 拠点へ
+  */
+
+  if(
+    game.enemyDefense.length===0
+  ){
+
+    damageEnemyBase();
+
+    return;
+
+  }
+
+
+  /*
+    通常攻撃の破壊枚数
+    ＝攻撃側国力
+  */
+
+  let destroyCount=
+    Math.min(
+      game.power,
+      game.enemyDefense.length
+    );
+
+
+  /*
+    破城兵
+    前線0枚時、防衛軍攻撃＋1
+  */
+
+  const hasSiege=
+    game.playerFront.some(
+      card=>
+        card.name==="破城兵"
+    );
+
+
+  if(hasSiege){
+
+    destroyCount=
+      Math.min(
+        destroyCount+1,
+        game.enemyDefense.length
+      );
+
+  }
+
+
+  /*
+    公開 → 破壊
+  */
+
+  for(
+    let i=0;
+    i<destroyCount;
+    i++
+  ){
+
+    const target=
+      game.enemyDefense.pop();
+
 
     /*
-       残りを構築デッキへ
+      ここで初めて公開
     */
 
-    playerDeck =
-        playerOriginalDeck;
-
-    cpuDeck =
-        cpuOriginalDeck;
+    target.revealed=true;
 
 
-    shuffleDeck(playerDeck);
-    shuffleDeck(cpuDeck);
-
-
-    playerFront = [];
-    enemyFront = [];
+    addLog(
+      "防衛軍公開："+target.card.name
+    );
 
 
     /*
-       テスト用手札
+      通常破壊なので
+      構築デッキへ戻す
     */
 
-    hand = [
+    returnToBuildDeck(
+      target.card
+    );
 
-        {
-            name: "歩兵",
-            type: "unit",
-            cost: 0,
-            attack: 2000,
-            defense: 2500
-        },
+  }
 
-        {
-            name: "槍兵",
-            type: "unit",
-            cost: 0,
-            attack: 2500,
-            defense: 2000
-        },
 
-        {
-            name: "弓兵",
-            type: "unit",
-            cost: 0,
-            attack: 1800,
-            defense: 1800
-        },
+  addLog(
+    "防衛軍破壊："+destroyCount+"枚"
+  );
 
-        {
-            name: "騎兵",
-            type: "unit",
-            cost: 1,
-            attack: 3000,
-            defense: 2000
-        }
 
+  render();
+
+}
+
+
+/* =========================================================
+   破壊カード処理
+========================================================= */
+
+function returnToBuildDeck(card){
+
+  game.buildDeck.push(
+    card
+  );
+
+
+  shuffle(
+    game.buildDeck
+  );
+
+}
+
+
+/*
+  永久追放。
+  これは構築デッキへ戻さない。
+*/
+
+function permanentlyRemove(card){
+
+  game.permanentlyRemoved.push(
+    card
+  );
+
+}
+
+
+/* =========================================================
+   拠点破壊
+========================================================= */
+
+function damageEnemyBase(){
+
+  if(game.gameOver){
+
+    return;
+
+  }
+
+
+  game.bases--;
+
+
+  if(
+    game.bases<=0
+  ){
+
+    game.gameOver=true;
+
+
+    document.getElementById(
+      "result"
+    ).style.display="block";
+
+
+    document.getElementById(
+      "result"
+    ).textContent="🎉 勝利！";
+
+
+    addLog(
+      "相手の拠点をすべて破壊"
+    );
+
+
+    render();
+
+    return;
+
+  }
+
+
+  /*
+    次の拠点は防衛軍0枚
+    ※自動補充しない
+  */
+
+  game.enemyDefense=[];
+
+
+  addLog(
+    "拠点破壊！残り拠点："+game.bases+
+    "。次の拠点は防衛軍0枚"
+  );
+
+
+  render();
+
+}
+
+
+/* =========================================================
+   前線戦闘
+========================================================= */
+
+function attackEnemyFront(
+  attackerIndex,
+  defenderIndex
+){
+
+  if(game.gameOver){
+
+    return;
+
+  }
+
+
+  const attacker=
+    game.playerFront[
+      attackerIndex
     ];
 
 
-    /*
-       CPU前線
-    */
-
-    enemyFront.push({
-
-        name: "歩兵",
-        type: "unit",
-        cost: 0,
-        attack: 2000,
-        defense: 2500,
-        ready: true
-
-    });
+  const defender=
+    game.enemyFront[
+      defenderIndex
+    ];
 
 
-    gameOver = false;
+  if(
+    !attacker ||
+    !defender
+  ){
 
-    canPlay = true;
+    return;
+
+  }
 
 
-    document.getElementById(
-        "result"
-    ).style.display = "none";
+  if(
+    !attacker.ready
+  ){
 
-
-    document.getElementById(
-        "endButton"
-    ).disabled = false;
-
+    addLog(
+      "このカードはまだ攻撃できない"
+    );
 
     render();
 
+    return;
 
-    showMessage(
-        "🂠 防衛軍5枚を裏向きで配置"
-    );
-
-}
+  }
 
 
-/* ==================================================
-   前線へカードを出す
-================================================== */
+  /*
+    ATK > DEF
+  */
 
-function playCard(index) {
+  if(
+    attacker.atk>
+    defender.def
+  ){
 
-    if (gameOver) return;
-
-
-    if (!canPlay) {
-
-        showMessage(
-            "⚠️ ターン終了済み"
-        );
-
-        return;
-
-    }
-
-
-    const card =
-        hand[index];
-
-
-    if (!card) return;
-
-
-    /*
-       コストチェック
-    */
-
-    if (cost < card.cost) {
-
-        showMessage(
-
-            "❌ コスト不足" +
-
-            "<br>" +
-
-            "必要：" +
-            card.cost +
-
-            " / 残り：" +
-            cost
-
-        );
-
-        return;
-
-    }
-
-
-    /*
-       前線最大3枚
-    */
-
-    if (playerFront.length >= 3) {
-
-        showMessage(
-            "❌ 前線は3枚まで"
-        );
-
-        return;
-
-    }
-
-
-    /*
-       ★ カードコストを消費
-    */
-
-    cost -= card.cost;
-
-
-    playerFront.push({
-
-        ...card,
-
-        ready: false
-
-    });
-
-
-    hand.splice(
-        index,
-        1
+    returnToBuildDeck(
+      defender
     );
 
 
-    showMessage(
-
-        "⚔️ " +
-        card.name +
-        "が前線に出撃！" +
-
-        "<br>" +
-
-        "残りコスト：" +
-        cost
-
+    game.enemyFront.splice(
+      defenderIndex,
+      1
     );
 
 
-    render();
-
-}
+    attacker.ready=false;
 
 
-/* ==================================================
-   手札→防衛軍
-   ★ 0コスト
-================================================== */
+    addLog(
+      attacker.name+
+      "が"+
+      defender.name+
+      "を破壊"
+    );
 
-function placeDefenseFromHand(index) {
-
-    if (gameOver) return;
-
-
-    if (!canPlay) {
-
-        showMessage(
-            "⚠️ ターン終了済み"
-        );
-
-        return;
-
-    }
+  }
 
 
-    /*
-       最大5枚
-    */
+  /*
+    ATK < DEF
+  */
 
-    if (playerDefense.length >= 5) {
+  else if(
+    attacker.atk<
+    defender.def
+  ){
 
-        showMessage(
-            "🛡️ 防衛軍は最大5枚です"
-        );
-
-        return;
-
-    }
-
-
-    const card =
-        hand[index];
-
-
-    if (!card) return;
-
-
-    /*
-       ★ コストは消費しない
-    */
-
-    playerDefense.push({
-
-        card: card,
-
-        revealed: false
-
-    });
-
-
-    hand.splice(
-        index,
-        1
+    returnToBuildDeck(
+      attacker
     );
 
 
-    showMessage(
-
-        "🂠 " +
-        card.name +
-        "を防衛軍へ配置！" +
-
-        "<br>" +
-
-        "コスト：" +
-        cost +
-        "（変化なし）"
-
+    game.playerFront.splice(
+      attackerIndex,
+      1
     );
 
 
-    render();
-
-}
-
-
-/* ==================================================
-   攻撃
-================================================== */
-
-function attack(index) {
-
-    if (gameOver) return;
-
-
-    const attacker =
-        playerFront[index];
-
-
-    if (!attacker) return;
-
-
-    if (!attacker.ready) {
-
-        showMessage(
-            "⏳ 次のターンから攻撃できます"
-        );
-
-        return;
-
-    }
-
-
-    /*
-       敵前線がある
-    */
-
-    if (enemyFront.length > 0) {
-
-        const defender =
-            enemyFront[0];
-
-
-        showMessage(
-
-            "⚔️ " +
-            attacker.name +
-            " vs " +
-            defender.name
-
-        );
-
-
-        setTimeout(
-            function() {
-
-                battle(index);
-
-            },
-            400
-        );
-
-
-        return;
-
-    }
-
-
-    /*
-       敵前線0
-       ↓
-       防衛軍
-    */
-
-    attackDefense(index);
-
-}
-
-
-/* ==================================================
-   防衛軍攻撃
-================================================== */
-
-function attackDefense(index) {
-
-    const attacker =
-        playerFront[index];
-
-
-    if (!attacker) return;
-
-
-    /*
-       防衛軍0
-       ↓
-       拠点
-    */
-
-    if (enemyDefense.length === 0) {
-
-        damageBase("cpu");
-
-        attacker.ready = false;
-
-        render();
-
-        return;
-
-    }
-
-
-    /*
-       国力分破壊
-    */
-
-    const destroyCount =
-        Math.min(
-            playerPower,
-            enemyDefense.length
-        );
-
-
-    revealAndDestroyDefense(
-        destroyCount,
-        attacker
+    addLog(
+      attacker.name+
+      "が破壊された"
     );
 
-}
+  }
 
 
-/* ==================================================
-   防衛軍公開→破壊
-================================================== */
+  /*
+    ATK = DEF
+  */
 
-function revealAndDestroyDefense(
-    count,
-    attacker
-) {
+  else{
 
-    let destroyed = 0;
+    returnToBuildDeck(
+      attacker
+    );
 
+    returnToBuildDeck(
+      defender
+    );
 
-    function processOne() {
 
-        if (
-            destroyed >= count ||
-            enemyDefense.length === 0
-        ) {
+    game.playerFront.splice(
+      attackerIndex,
+      1
+    );
 
-            attacker.ready = false;
+    game.enemyFront.splice(
+      defenderIndex,
+      1
+    );
 
 
-            if (enemyDefense.length === 0) {
+    addLog(
+      "同時破壊"
+    );
 
-                showMessage(
-                    "🛡️ 防衛軍をすべて破壊！"
-                );
+  }
 
-            }
-            else {
 
-                showMessage(
-
-                    "🛡️ 防衛軍を " +
-                    destroyed +
-                    " 枚破壊！" +
-
-                    "<br>" +
-
-                    "残り：" +
-                    enemyDefense.length
-
-                );
-
-            }
-
-
-            render();
-
-            return;
-
-        }
-
-
-        const target =
-            enemyDefense[
-                enemyDefense.length - 1
-            ];
-
-
-        /*
-           公開
-        */
-
-        target.revealed = true;
-
-
-        showMessage(
-
-            "🃏 防衛軍を公開！" +
-
-            "<br><strong>" +
-
-            target.card.name +
-
-            "</strong>" +
-
-            "<br>" +
-
-            "ATK " +
-            target.card.attack +
-
-            " / DEF " +
-            target.card.defense
-
-        );
-
-
-        render();
-
-
-        /*
-           少し見せてから破壊
-        */
-
-        setTimeout(
-            function() {
-
-                const destroyedCard =
-                    enemyDefense.pop();
-
-
-                /*
-                   構築デッキへ戻す
-                */
-
-                cpuDeck.push(
-                    destroyedCard.card
-                );
-
-
-                /*
-                   シャッフル
-                */
-
-                shuffleDeck(
-                    cpuDeck
-                );
-
-
-                destroyed++;
-
-
-                showMessage(
-
-                    "💥 " +
-                    destroyedCard.card.name +
-                    "を破壊！" +
-
-                    "<br>" +
-
-                    "構築デッキへ戻してシャッフル"
-
-                );
-
-
-                render();
-
-
-                setTimeout(
-                    processOne,
-                    600
-                );
-
-            },
-            900
-        );
-
-    }
-
-
-    processOne();
+  render();
 
 }
 
 
-/* ==================================================
-   前線戦闘
-================================================== */
-
-function battle(attackerIndex) {
-
-    const attacker =
-        playerFront[attackerIndex];
-
-    const defender =
-        enemyFront[0];
-
-
-    if (!attacker || !defender) {
-        return;
-    }
-
-
-    if (
-        attacker.attack >
-        defender.defense
-    ) {
-
-        enemyFront.shift();
-
-
-        showMessage(
-
-            "💥 " +
-            attacker.name +
-            "が" +
-            defender.name +
-            "を破壊！"
-
-        );
-
-    }
-
-    else if (
-        attacker.attack <
-        defender.defense
-    ) {
-
-        playerFront.splice(
-            attackerIndex,
-            1
-        );
-
-
-        showMessage(
-
-            "💀 " +
-            attacker.name +
-            "が破壊された！"
-
-        );
-
-    }
-
-    else {
-
-        playerFront.splice(
-            attackerIndex,
-            1
-        );
-
-        enemyFront.shift();
-
-
-        showMessage(
-            "💥 両方のカードが同時破壊！"
-        );
-
-    }
-
-
-    render();
-
-}
-
-
-/* ==================================================
-   拠点処理
-================================================== */
-
-function damageBase(target) {
-
-    if (gameOver) return;
-
-
-    /*
-       CPU拠点
-    */
-
-    if (target === "cpu") {
-
-        cpuBase--;
-
-
-        if (cpuBase <= 0) {
-
-            endGame("win");
-
-            return;
-
-        }
-
-
-        showMessage(
-
-            "🏰 CPU拠点を1つ破壊！" +
-
-            "<br>" +
-
-            "残り拠点：" +
-            cpuBase +
-
-            "<br>" +
-
-            "🛡️ 次の拠点も防衛軍0枚"
-
-        );
-
-
-        render();
-
-        return;
-
-    }
-
-
-    /*
-       自分の拠点
-    */
-
-    if (target === "player") {
-
-        playerBase--;
-
-
-        if (playerBase <= 0) {
-
-            endGame("lose");
-
-            return;
-
-        }
-
-
-        showMessage(
-
-            "🏰 あなたの拠点を1つ破壊！" +
-
-            "<br>" +
-
-            "残り拠点：" +
-            playerBase +
-
-            "<br>" +
-
-            "🛡️ 次の拠点も防衛軍0枚"
-
-        );
-
-
-        render();
-
-    }
-
-}
-
-
-/* ==================================================
+/* =========================================================
    ターン終了
-================================================== */
+========================================================= */
 
-function endTurn() {
+function finishTurn(){
 
-    if (gameOver) return;
+  if(game.gameOver){
 
+    return;
 
-    canPlay = false;
-
-
-    showMessage(
-        "ターン終了……"
-    );
+  }
 
 
-    setTimeout(
-        nextTurn,
-        600
-    );
+  game.phase="end";
+
+
+  game.playerFront.forEach(
+    card=>{
+
+      if(!card.rush){
+
+        card.ready=false;
+
+      }
+
+    }
+  );
+
+
+  addLog(
+    "ターン終了"
+  );
+
+
+  render();
 
 }
 
 
-/* ==================================================
-   次ターン
-================================================== */
-
-function nextTurn() {
-
-    if (gameOver) return;
-
-
-    turn++;
-
-
-    /*
-       ★ 今回の追加部分
-       毎ターンコスト3追加
-    */
-
-    cost += 3;
-
-
-    /*
-       前線カードを攻撃可能に
-    */
-
-    playerFront.forEach(
-        function(card) {
-
-            card.ready = true;
-
-        }
-    );
-
-
-    /*
-       構築デッキから1枚ドロー
-    */
-
-    if (playerDeck.length > 0) {
-
-        hand.push(
-            playerDeck.shift()
-        );
-
-    }
-
-
-    /*
-       防衛軍は自動補充しない
-    */
-
-    canPlay = true;
-
-
-    showMessage(
-
-        "📥 ターン " +
-        turn +
-        " 開始！" +
-
-        "<br>" +
-
-        "💰 コスト +" +
-        "3" +
-
-        "<br>" +
-
-        "残りコスト：" +
-        cost
-
-    );
-
-
-    render();
-
-}
-
-
-/* ==================================================
-   勝敗
-================================================== */
-
-function endGame(result) {
-
-    gameOver = true;
-
-    canPlay = false;
-
-
-    const resultElement =
-        document.getElementById(
-            "result"
-        );
-
-
-    resultElement.style.display =
-        "block";
-
-
-    if (result === "win") {
-
-        resultElement.textContent =
-            "🎉 勝利！";
-
-
-        showMessage(
-            "CPUの拠点をすべて破壊しました！"
-        );
-
-    }
-
-
-    if (result === "lose") {
-
-        resultElement.textContent =
-            "💀 敗北";
-
-
-        showMessage(
-            "あなたの拠点がすべて破壊されました。"
-        );
-
-    }
-
-
-    document.getElementById(
-        "endButton"
-    ).disabled = true;
-
-}
-
-
-/* ==================================================
-   防衛軍表示
-================================================== */
+/* =========================================================
+   表示
+========================================================= */
 
 function renderDefense(
-    elementId,
-    defense
-) {
+  elementId,
+  defense
+){
 
-    const container =
-        document.getElementById(
-            elementId
-        );
-
-
-    container.innerHTML = "";
-
-
-    defense.forEach(
-        function(defenseCard) {
-
-            const slot =
-                document.createElement(
-                    "div"
-                );
-
-
-            slot.className =
-                "slot defense";
-
-
-            if (!defenseCard.revealed) {
-
-                slot.classList.add(
-                    "face-down"
-                );
-
-
-                slot.innerHTML =
-                    "🂠";
-
-            }
-
-            else {
-
-                slot.classList.add(
-                    "revealed"
-                );
-
-
-                slot.innerHTML =
-
-                    "<strong>" +
-                    defenseCard.card.name +
-                    "</strong><br>" +
-
-                    "ATK " +
-                    defenseCard.card.attack +
-
-                    "<br>" +
-
-                    "DEF " +
-                    defenseCard.card.defense;
-
-            }
-
-
-            container.appendChild(
-                slot
-            );
-
-        }
+  const element=
+    document.getElementById(
+      elementId
     );
 
 
-    if (defense.length === 0) {
-
-        const empty =
-            document.createElement(
-                "div"
-            );
+  element.innerHTML="";
 
 
-        empty.className =
-            "slot defense";
+  if(
+    defense.length===0
+  ){
+
+    element.innerHTML=
+      '<div class="slot defense-slot">'+
+      '防衛軍なし'+
+      '</div>';
+
+    return;
+
+  }
 
 
-        empty.innerHTML =
-            "防衛軍なし<br>" +
-            "次の攻撃で拠点へ";
+  defense.forEach(
+    (entry,index)=>{
 
-
-        container.appendChild(
-            empty
+      const slot=
+        document.createElement(
+          "div"
         );
 
+
+      slot.className=
+        "slot defense-slot";
+
+
+      /*
+        裏向き
+      */
+
+      if(
+        !entry.revealed
+      ){
+
+        slot.classList.add(
+          "face-down"
+        );
+
+
+        slot.textContent="🂠";
+
+      }
+
+
+      /*
+        公開済み
+      */
+
+      else{
+
+        slot.innerHTML=
+
+          "<strong>"+
+          entry.card.name+
+          "</strong><br>"+
+          "ATK "+
+          entry.card.atk+
+          "<br>"+
+          "DEF "+
+          entry.card.def;
+
+      }
+
+
+      element.appendChild(
+        slot
+      );
+
     }
+  );
 
 }
 
 
-/* ==================================================
-   画面更新
-================================================== */
+function renderZone(
+  elementId,
+  cards
+){
 
-function render() {
-
+  const element=
     document.getElementById(
-        "turn"
-    ).textContent =
-        turn;
-
-
-    document.getElementById(
-        "playerPower"
-    ).textContent =
-        playerPower;
-
-
-    document.getElementById(
-        "enemyDefenseCount"
-    ).textContent =
-        enemyDefense.length;
-
-
-    document.getElementById(
-        "cpuBase"
-    ).textContent =
-        cpuBase;
-
-
-    document.getElementById(
-        "cost"
-    ).textContent =
-        cost;
-
-
-    /*
-       防衛軍
-    */
-
-    renderDefense(
-        "enemyDefense",
-        enemyDefense
+      elementId
     );
 
 
-    renderDefense(
-        "playerDefense",
-        playerDefense
-    );
+  element.innerHTML="";
 
 
-    /*
-       CPU前線
-    */
+  if(
+    cards.length===0
+  ){
 
-    const enemy =
-        document.getElementById(
-            "enemyFront"
+    element.innerHTML=
+      '<div class="slot">空き</div>';
+
+    return;
+
+  }
+
+
+  cards.forEach(
+    card=>{
+
+      const slot=
+        document.createElement(
+          "div"
         );
 
 
-    enemy.innerHTML = "";
+      slot.className=
+        "slot";
 
 
-    for (
-        let i = 0;
-        i < 3;
-        i++
-    ) {
+      slot.innerHTML=
 
-        const slot =
-            document.createElement(
-                "div"
-            );
-
-
-        slot.className =
-            "slot enemy";
+        "<strong>"+
+        card.name+
+        "</strong><br>"+
+        "ATK "+
+        (card.atk||"-")+
+        "<br>"+
+        "DEF "+
+        (card.def||"-");
 
 
-        if (enemyFront[i]) {
-
-            const card =
-                enemyFront[i];
-
-
-            slot.innerHTML =
-
-                "<strong>" +
-                card.name +
-                "</strong><br><br>" +
-
-                "ATK " +
-                card.attack +
-
-                "<br>" +
-
-                "DEF " +
-                card.defense;
-
-        }
-
-        else {
-
-            slot.textContent =
-                "空き";
-
-        }
-
-
-        enemy.appendChild(
-            slot
-        );
+      element.appendChild(
+        slot
+      );
 
     }
-
-
-    /*
-       自分前線
-    */
-
-    const front =
-        document.getElementById(
-            "front"
-        );
-
-
-    front.innerHTML = "";
-
-
-    for (
-        let i = 0;
-        i < 3;
-        i++
-    ) {
-
-        const slot =
-            document.createElement(
-                "div"
-            );
-
-
-        slot.className =
-            "slot player";
-
-
-        if (playerFront[i]) {
-
-            const card =
-                playerFront[i];
-
-
-            slot.innerHTML =
-
-                "<strong>" +
-                card.name +
-                "</strong><br><br>" +
-
-                "ATK " +
-                card.attack +
-
-                "<br>" +
-
-                "DEF " +
-                card.defense;
-
-
-            if (
-                card.ready &&
-                !gameOver
-            ) {
-
-                const button =
-                    document.createElement(
-                        "button"
-                    );
-
-
-                button.className =
-                    "action";
-
-
-                button.textContent =
-                    "⚔️ 攻撃";
-
-
-                button.onclick =
-                    function() {
-
-                        attack(i);
-
-                    };
-
-
-                slot.appendChild(
-                    button
-                );
-
-            }
-
-            else if (!card.ready) {
-
-                const text =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                text.textContent =
-                    "⏳ 待機";
-
-
-                slot.appendChild(
-                    text
-                );
-
-            }
-
-        }
-
-        else {
-
-            slot.textContent =
-                "空き";
-
-        }
-
-
-        front.appendChild(
-            slot
-        );
-
-    }
-
-
-    /*
-       手札
-    */
-
-    const handElement =
-        document.getElementById(
-            "hand"
-        );
-
-
-    handElement.innerHTML = "";
-
-
-    hand.forEach(
-        function(card, index) {
-
-            const cardBox =
-                document.createElement(
-                    "div"
-                );
-
-
-            cardBox.className =
-                "card";
-
-
-            cardBox.innerHTML =
-
-                "<div class='card-name'>" +
-
-                card.name +
-
-                "</div>" +
-
-                "<div class='card-info'>" +
-
-                "コスト：" +
-                card.cost +
-
-                "<br>" +
-
-                "ATK：" +
-                card.attack +
-
-                "<br>" +
-
-                "DEF：" +
-                card.defense +
-
-                "</div>";
-
-
-            /*
-               前線へ出す
-            */
-
-            const playButton =
-                document.createElement(
-                    "button"
-                );
-
-
-            playButton.className =
-                "action";
-
-
-            playButton.textContent =
-                "⚔️ 前線に出す";
-
-
-            playButton.onclick =
-                function() {
-
-                    playCard(index);
-
-                };
-
-
-            cardBox.appendChild(
-                playButton
-            );
-
-
-            /*
-               防衛軍へ置く
-               ★ 0コスト
-            */
-
-            const defenseButton =
-                document.createElement(
-                    "button"
-                );
-
-
-            defenseButton.className =
-                "action";
-
-
-            if (
-                playerDefense.length >= 5
-            ) {
-
-                defenseButton.disabled =
-                    true;
-
-                defenseButton.textContent =
-                    "🛡️ 防衛軍満員";
-
-            }
-
-            else {
-
-                defenseButton.textContent =
-                    "🂠 防衛軍に置く";
-
-
-                defenseButton.onclick =
-                    function() {
-
-                        placeDefenseFromHand(
-                            index
-                        );
-
-                    };
-
-            }
-
-
-            cardBox.appendChild(
-                defenseButton
-            );
-
-
-            handElement.appendChild(
-                cardBox
-            );
-
-        }
-    );
-
-
-    document.getElementById(
-        "endButton"
-    ).disabled =
-        gameOver;
+  );
 
 }
 
 
-/* ==================================================
-   メッセージ
-================================================== */
+/* =========================================================
+   手札表示
+========================================================= */
 
-function showMessage(text) {
+function renderHand(){
 
+  const element=
     document.getElementById(
-        "message"
-    ).innerHTML =
-        text;
+      "hand"
+    );
+
+
+  element.innerHTML="";
+
+
+  if(
+    game.hand.length===0
+  ){
+
+    element.innerHTML=
+      '<div class="card">手札なし</div>';
+
+    return;
+
+  }
+
+
+  game.hand.forEach(
+    (card,index)=>{
+
+      const box=
+        document.createElement(
+          "div"
+        );
+
+
+      box.className="card";
+
+
+      box.innerHTML=
+
+        "<div class='card-name'>"+
+        card.name+
+        "</div>"+
+
+        "<div class='card-info'>"+
+        "種類："+card.type+
+        "<br>"+
+        "コスト："+(card.cost||0)+
+        "<br>"+
+        "国力："+(card.power||0)+
+        "<br>"+
+        "ATK："+(card.atk||"-")+
+        "<br>"+
+        "DEF："+(card.def||"-")+
+        "<br>"+
+        card.effect+
+        "</div>";
+
+
+      /*
+        通常使用
+      */
+
+      const useButton=
+        document.createElement(
+          "button"
+        );
+
+
+      useButton.textContent=
+        "使用・配置";
+
+
+      useButton.onclick=
+        function(){
+
+          playCard(index);
+
+        };
+
+
+      box.appendChild(
+        useButton
+      );
+
+
+      /*
+        防衛軍配置
+        ★ 0コスト
+      */
+
+      const defenseButton=
+        document.createElement(
+          "button"
+        );
+
+
+      defenseButton.textContent=
+        "🂠 防衛軍に置く（0コスト）";
+
+
+      if(
+        game.playerDefense.length>=
+        RULES.DEFENSE_MAX
+      ){
+
+        defenseButton.disabled=true;
+
+      }
+      else{
+
+        defenseButton.onclick=
+          function(){
+
+            placeDefenseFromHand(
+              index
+            );
+
+          };
+
+      }
+
+
+      box.appendChild(
+        defenseButton
+      );
+
+
+      element.appendChild(
+        box
+      );
+
+    }
+  );
 
 }
 
 
-/* ==================================================
+/* =========================================================
+   全体レンダー
+========================================================= */
+
+function render(){
+
+  document.getElementById(
+    "turn"
+  ).textContent=
+    game.turn;
+
+
+  document.getElementById(
+    "power"
+  ).textContent=
+    game.power;
+
+
+  document.getElementById(
+    "cost"
+  ).textContent=
+    game.cost;
+
+
+  document.getElementById(
+    "bases"
+  ).textContent=
+    game.bases;
+
+
+  document.getElementById(
+    "defenseCount"
+  ).textContent=
+    game.enemyDefense.length;
+
+
+  document.getElementById(
+    "handCount"
+  ).textContent=
+    game.hand.length;
+
+
+  renderDefense(
+    "playerDefense",
+    game.playerDefense
+  );
+
+
+  renderDefense(
+    "enemyDefense",
+    game.enemyDefense
+  );
+
+
+  renderZone(
+    "playerFront",
+    game.playerFront
+  );
+
+
+  renderZone(
+    "enemyFront",
+    game.enemyFront
+  );
+
+
+  renderZone(
+    "playerRear",
+    game.playerRear
+  );
+
+
+  renderZone(
+    "enemyRear",
+    game.enemyRear
+  );
+
+
+  renderZone(
+    "playerAir",
+    game.playerAir
+  );
+
+
+  renderZone(
+    "enemyAir",
+    game.enemyAir
+  );
+
+
+  renderZone(
+    "playerSea",
+    [
+      ...game.playerSeaMain,
+      ...game.playerSeaEscort
+    ]
+  );
+
+
+  renderZone(
+    "enemySea",
+    [
+      ...game.enemySeaMain,
+      ...game.enemySeaEscort
+    ]
+  );
+
+
+  renderZone(
+    "playerHeroes",
+    game.playerHeroes
+  );
+
+
+  renderZone(
+    "playerDiplomats",
+    game.playerDiplomats
+  );
+
+
+  renderHand();
+
+
+  document.getElementById(
+    "log"
+  ).innerHTML=
+    game.log
+      .slice()
+      .reverse()
+      .map(
+        text=>
+          "<div>"+
+          text+
+          "</div>"
+      )
+      .join("");
+
+
+  document.getElementById(
+    "message"
+  ).textContent=
+    game.gameOver
+      ? "ゲーム終了"
+      : "現在のフェイズ："+game.phase;
+
+}
+
+
+/* =========================================================
    起動
-================================================== */
+========================================================= */
 
 resetGame();
 
